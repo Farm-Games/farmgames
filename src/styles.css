@@ -197,6 +197,16 @@ select#search {
   padding: 32px;
 }
 
+.actual-intro {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 32px;
+}
+
 #enter-btn {
   margin-top: 12px;
   width: 40%;
