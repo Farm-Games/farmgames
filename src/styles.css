@@ -187,14 +187,6 @@ select#search {
   max-height: 90vh;
   border-radius: 8px;
   background-color: var(--background-highlight);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 12px;
-  padding: 32px;
 }
 
 .actual-intro {
@@ -205,6 +197,7 @@ select#search {
   text-align: center;
   gap: 12px;
   padding: 32px;
+  width: 100%;
 }
 
 #enter-btn {
