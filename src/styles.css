@@ -191,6 +191,9 @@ select#search {
 
 .actual-intro {
   display: none;
+}
+
+.actual-intro, .intro-intro, .intro {
   flex-direction: column;
   align-items: center;
   justify-content: center;

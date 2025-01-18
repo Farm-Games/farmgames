@@ -58,7 +58,6 @@ const mountIntroScreen = () => `
                 actualIntro.style.display = 'flex';
             };
 
-            document.addEventListener('keydown', enterSite);
             enterButton.addEventListener('click', enterSite);
             firstEnterButton.addEventListener('click', startIntro);
         </script>
