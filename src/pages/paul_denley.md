@@ -1,0 +1,10 @@
+**Paul Denley** is the founding father and first Lord of the Farm Games. Denley created the Farm Games alongside his brother, [Henry Denley](#a), and business associate [Sneeze Chenlin](#a). These three are regarded as the Founding Fathers of Farm Games.
+
+Denley was born in Michipicoten, Ontario on August 9, 1852. He spent most of his life working on the railroads, and for a period in the 1880's he was an oil prospector in the United States alongside his brother Henry. It was during his travels in the States that he first dreamed of creating the Farm Games. In 1894, he and Henry set out to gather six mighty clubs and build the greatest hockey association the world would ever know. In 1896, the Denley brothers met Wisconsin native Sneeze Chenlin, who committed himself to their cause. 
+
+![Paul Denley sitting in his favourite chair.](file_paul_denley_jpg)
+> Paul Denley sitting in his favourite chair.
+
+The first two hockey clubs to become official Farm Games teams were the [Calgary Jailbirds](calgary_jailbirds), led by [Bob Bruggins](#a), and the [St. John's Mariners](st__john_s_mariners), led by [D'Arcy McGibbons](#a). By 1896, these two clubs were joined by three others; the [Albany Rattlers](albany_rattlers), [Halifax Walrus](halifax_walrus), and [Newmarket Roadrunners](newmarket_roadrunners). The final team was a contentious bout; the decision was between the west coast Canadian city of Victoria, or the city of Portland, Oregon in America. Eventually, thanks to the urging of Sneeze Chenlin, the [Portland Patriots](portland_patriots) were born. Hence, the [Original Six](#a) Farm Games teams had been assembled, and by 1897, the first official Farm Games campaign began.
+
+Denley passed away in 1930 at the age of 78 from autistic enterocolitis. He was immortalized when his left hand ring finger was removed and forged into the top of the [Denley Cup](denley_cup), and his corpse placed at the center of the trophy forevermore. His descendants continue to rule over the Farm Games to this day.

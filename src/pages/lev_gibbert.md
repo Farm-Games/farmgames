@@ -1,0 +1,10 @@
+**Levon Gibbert** is a former winger in the Farm Games. He played for the [Victoria Serpents](#a), [Lexington Racers](lexington_racers) and [Miami Tropics](#a) from 1987 to 1995. After his playing career ended, Gibbert took up coaching, acting as head coach for the [Houston Giants](#a) for three campaigns, from 2002-2004. He was later hired as a talkman for the Farm Games broadcast in 2006, where he hosted a show called "Gibs Hot Takes", wherein Gibbert would deliver takes on Farm Games as well as politics such as PC culture and porn industry.  In 2007 and 2008, Gibbert was one of the Knights of the [Denley Roundtable](#a). He also co-hosted [The Beef Stove](the_beef_stove) alongside [Colonel Scraps](#a) from 2009-2011, and with [Pete Larsgaard](pete_larsgaard) from mid-2011 onward. After four years of saying baseless things and spreading conjecture on The Beef Stove, Gibbert was hired by [Mohammed Goswami](#a) as a Recruitment Officer for the [Hamilton Hounds](hamilton_hounds) in 2013.
+
+![Lev Gibbert, former General Manager and head coach and current host of the "Return of the Gib" podcast.](file_lev_gibbert_jpg)
+> Lev Gibbert, former General Manager and head coach and current host of the "Return of the Gib" podcast.
+
+After Gibbert found talent such as [Jaxon Gleary](#a) and [Mikey Boofer](#a), he was given the General Manager position in the Hounds organization in 2016. Gibbert spent four years building the current Hamilton Hounds roster, until he was fired by Goswami in favour of [Narinder Kumar](#a) after the 2020 season. Gibbert was heavily criticized during his time as GM due to trading talent like [Mikey Boofer](#a) and [Trill Landy](#a), as well as the infamous [Max Dennis](#a)-[Jonah Finks](#a) trade that supposedly played a big role in his firing.
+
+Gibbert is currently looking for work as a coach or GM in the Farm Games, and in the meantime has started a political podcast called "Return of the Gib" wherein he discusses topics such as MGTOW and Dondald Trump.
+
+<br />

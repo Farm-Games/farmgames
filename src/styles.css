@@ -1,0 +1,209 @@
+/* ----- Base Colors ----- */
+:root {
+  --deep-blue: #4a90e2; /* Muted blue for primary accents */
+  --muted-coral: #d4e8ff; /* Muted coral for contrast */
+  --dark-slate: #0d1f31; /* Deep dark background */
+  --off-white: #f5f5f5; /* Light backgrounds */
+  --ice-blue: #a7c6ed; /* Soft light blue highlights */
+  --emerald-green: #388e3c; /* Green for links/buttons */
+  --deep-orange: #ff5722; /* Bold orange for highlights */
+  --gray-light: #bdc3c7; /* Muted gray for text */
+  --gray-dark: #7f8c8d; /* Darker gray for secondary text */
+  --background-primary: var(--dark-slate);
+  --background-secondary: var(--off-white);
+  --background-highlight: var(--ice-blue);
+  --text-default: var(--dark-slate);
+  --text-primary: var(--deep-blue);
+  --text-secondary: var(--gray-light);
+  --text-muted: var(--gray-dark);
+  --quote-background: var(--muted-coral);
+  --quote-text: var(--dark-slate);
+  --quote-border: var(--deep-blue);
+  --link-color: var(--deep-blue);
+  --link-hover: var(--emerald-green);
+  --button-primary: var(--deep-blue);
+  --button-hover: var(--emerald-green);
+  --button-text: var(--off-white);
+  --image-border: var(--muted-coral);
+}
+
+/* ----- Global Reset and Body Styling ----- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'IBM Plex Mono', serif;
+  background-color: var(--background-primary);
+  color: var(--text-default);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 10px;
+  line-height: 1.6;
+  font-size: 1em;
+}
+
+/* ----- Header Section ----- */
+header {
+  background-color: var(--dark-slate);
+  padding: 20px;
+  text-align: center;
+  color: var(--off-white);
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Jersey 15', serif;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+h1 { font-size: 3.5em; }
+h2 { font-size: 2.2em; }
+h3 { font-size: 2em; }
+h4 { font-size: 1.7em; }
+h5 { font-size: 1.5em; }
+
+/* ----- Link Styling ----- */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+/* ----- Article Section ----- */
+article {
+  background-color: var(--background-secondary);
+  margin-top: 40px;
+  padding: 20px 40px;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+}
+
+article img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 2px solid var(--image-border);
+  margin-top: 15px;
+}
+
+/* ----- Blockquote Styling ----- */
+blockquote {
+  background-color: var(--quote-background);
+  color: var(--quote-text);
+  padding: 15px;
+  border-left: 5px solid var(--quote-border);
+  font-style: italic;
+  margin: 20px 0;
+  font-size: 1.1em;
+}
+
+/* ----- Footer Section ----- */
+footer {
+  background-color: var(--dark-slate);
+  color: var(--off-white);
+  text-align: center;
+  padding: 15px;
+}
+
+/* ----- Button Styling ----- */
+button {
+  background-color: var(--button-primary);
+  color: var(--button-text);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: var(--button-hover);
+}
+
+/* ----- Spacing for Articles ----- */
+body > article > *:not(:last-child) {
+  margin-bottom: 24px;
+}
+
+html > body > article > h1,
+html > body > article > h2,
+html > body > article > h3,
+html > body > article > h4,
+html > body > article > h5,
+html > body > article > h6 {
+  margin-bottom: 12px !important;
+}
+
+/* ----- Navigation Styling ----- */
+.nav {
+  display: flex;
+  gap: 10px;
+  font-size: 24px;
+  padding: 16px 0;
+}
+
+body > .nav {
+  margin-bottom: 0;
+}
+
+/* ----- Gallery Layout ----- */
+gallery,
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 8px;
+}
+
+/* ----- Search Select ----- */
+select#search {
+  display: none;
+}
+
+.intro-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.intro {
+  max-width: 75vw;
+  width: 800px;
+  max-height: 90vh;
+  border-radius: 8px;
+  background-color: var(--background-highlight);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 32px;
+}
+
+#enter-btn {
+  margin-top: 12px;
+  width: 40%;
+}
+
+video {
+  width: 100%;
+  border-radius: 8px;
+  border: 2px solid var(--image-border);
+}

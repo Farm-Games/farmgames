@@ -1,0 +1,1 @@
+Not WWII, but similiar

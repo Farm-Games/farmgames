@@ -1,0 +1,1 @@
+The Miami Bikini Babes were an unsuccessful, and widely considered despicable, Farm Games rebrand in the 1980s. After facing mounting legal pressure from the Jewish Defence League, the now defunct Miami Foreskins were forced to change their name and jerseys

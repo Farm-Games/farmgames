@@ -1,0 +1,1 @@
+Hamper Morgansen, founder of the Portland Patriots

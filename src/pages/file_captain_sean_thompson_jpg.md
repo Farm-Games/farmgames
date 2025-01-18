@@ -1,0 +1,1 @@
+Mariners captain Sean Thompson

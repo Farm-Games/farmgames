@@ -1,0 +1,10 @@
+**Dean Resler** is a Canadian professional ice hockey winger in the Farm Games. He played for the [Cleveland Red Roosters](cleveland_red_roosters), [Halifax Walrus](halifax_walrus) and [Calgary Jailbirds](calgary_jailbirds) from 1982 until 1999. He is a member of the Farm Games Hall of Fame. Resler won five [Denley Cups](denley_cup) in his career, four with the Roosters and one with the Walrus. He is heralded as one of the greatest playmaker's in Farm Games history, as well as the best lovemaker. It is said Dean Resler has bedded 734 women and men, and has several unclaimed bastards across the world.
+
+Resler took up coaching for a while in the late 2000's, coaching the [San Diego Novas](#a) for several campaigns until his retirement. He is currently a Farm Games reporter, reading books and catching bugs on live TV. Resler was a member of the [Denley Roundtable](#a) from 2014 until 2016, before becoming a part of the three-man show [Old Time Cummers](#a), alongside [Peter O'Don Patrion](peter_o_don_patrion) and [Jimmy Swallow](#a) in late 2016. Dean also has his show [Dean Reads](#a) wherein he teaches children about bugs and Jesus. Resler has a very large pig named [Gordon](#a), whom he brings to the studio frequently and serves as a set piece during the show. Gordon has become a celebrity himself, being the most famous pig in Canada. The Farm Games legend has hinted at the possibility of him taking up a General Manager position in the near future, but nothing has been confirmed.
+
+![Dean Resler, pictured in the Farm Games museum.](file_dean_resler_jpg)
+> Dean Resler, pictured in the Farm Games museum.
+
+Dean's two sons, [Eric Resler](#a) and [Luke Resler](#a), both play in the Farm Games today. His brother, [Dick Resler](#a), is currently the team president of the [Lexington Racers](lexington_racers).
+
+<br />

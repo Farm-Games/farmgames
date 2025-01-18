@@ -1,0 +1,14 @@
+
+![Flame Crennelchovik pictured here speaking at the UFO Convention in Brandon, Manitoba.](file_flame_crennelchovik_jpg)
+> Flame Crennelchovik pictured here speaking at the UFO Convention in Brandon, Manitoba.
+
+**Flame Crennelchovik** is a former professional ice hockey centerman in the Farm Games. He played for the [Hamilton Hounds](hamilton_hounds), [Portland Patriots](portland_patriots) and [Brandon Jacks](brandon_jacks) from 1985 until 2004. He captained both the Portland Patriots and the Brandon Jacks to [Denley Cup](denley_cup) championships, earning himself a spot in the Farm Games Hall of Fame. Crennelchovik was considered one of the best power forwards of the 90's, pairing up with winger [Bronin Konpecki](#a) on the Patriots to become known as arguably the most deadly offensive pairing in the league.
+
+![Crennelchovik seen here in his younger days circa 1991.](file_young_crennelchovik_jpg)
+> Crennelchovik seen here in his younger days circa 1991.
+
+Born in 1966 in Czechoslovakia to an unknown mother and [gravel man](#a) Sperm Crennelchovik, Flame grew up very poor but managed to watch the Farm Games at the local tavern he would hang around in. His father would beat him when he spoke of the Farm Games, due to him wanting Flame to become a gravel man as well. In 1976, the Crennelchovik's defected to Canada, where Flame became even more enamored with the Farm Games, growing to become a fan of the Brandon Jacks and [St. John's Mariners](st__john_s_mariners). Sperm hated this and tried to defy Flame's hockey dreams, but even while learning about gravel business, Flame would sneak out to play hockey on the ponds and puddles. Flame was discovered by a man named [John Hawkey](#a) in 1979, who mentored Flame in the ways of hockey so that he could one day become a famous Farm Games player. One day, in 1984, Flame attended a [Farm Games Reaping](farm_games_reaping) in Selkirk, Manitoba, where he was selected by the Recruiters to come to [Farm Games HQ](#a) in Northern Ontario. Here he was tested for Farm Games eligibility, and was placed in the draft pool. He was drafted by the Hamilton Hounds in 1985, and began his Farm Games dream. It is said that after being drafted, he went to see John Hawkey, who disparated into thin air after Flame told him of his ascendance to the Farm Games.
+
+Since his retirement, Crennelchovik has become very interested in UFOlogy and ancient aliens conspiracy theories, telling several publications that he has no plans on returning to work with the Farm Games in any capacity unless it directly correlates to his studies in the field of UFO's and extraterrestrials.
+
+<br />

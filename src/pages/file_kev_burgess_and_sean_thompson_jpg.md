@@ -1,0 +1,1 @@
+Mariners top defencemen Kev Burgess and Sean Thompson having fun in the sun.
