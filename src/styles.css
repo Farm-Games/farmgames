@@ -87,6 +87,12 @@ article {
   min-height: 100vh;
 }
 
+@media (max-width: 750px) {
+  article {
+    padding: 10px 16px;
+  }
+}
+
 article img {
   max-width: 100%;
   border-radius: 8px;
