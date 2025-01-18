@@ -29,17 +29,17 @@ const mountIntroScreen = () => `
 
             introAudio.volume = 0.25;
 
-            const enterSite = (shouldNotSetDismissedTime) => {
+            const enterSite = (shouldSetDismissedAt) => {
                 introVideo.pause();
                 introAudio.pause();
-                if (!shouldNotSetDismissedTime) {
+                if (shouldSetDismissedAt) {
                     localStorage.setItem("dismissed-intro", new Date().getTime());
                 }
                 document.querySelector('.intro-outer').style.display = 'none';
             };
 
             if (hasDismissed) {
-                enterSite(true);
+                enterSite(false);
             }
 
             const startIntro = () => {
@@ -58,7 +58,7 @@ const mountIntroScreen = () => `
                 actualIntro.style.display = 'flex';
             };
 
-            enterButton.addEventListener('click', enterSite);
+            enterButton.addEventListener('click', () => enterSite(true));
             firstEnterButton.addEventListener('click', startIntro);
         </script>
     </div>
