@@ -187,19 +187,19 @@ select#search {
   max-height: 90vh;
   border-radius: 8px;
   background-color: var(--background-highlight);
+  padding: 32px;
 }
 
 .actual-intro {
   display: none;
 }
 
-.actual-intro, .intro-intro, .intro {
+.actual-intro, .intro-intro {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 12px;
-  padding: 32px;
   width: 100%;
 }
 
