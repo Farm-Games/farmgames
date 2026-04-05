@@ -366,12 +366,26 @@ app.post('/api/update', (req, res) => {
 
 // ======= START =======
 
-app.listen(PORT, async () => {
-  const url = `http://localhost:${PORT}`;
-  console.log(`\n  Farm Games Wiki Editor running at: ${url}\n`);
+function getLocalIP() {
+  const os = require('os');
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) return iface.address;
+    }
+  }
+  return null;
+}
+
+app.listen(PORT, '0.0.0.0', async () => {
+  const localIP = getLocalIP();
+  console.log(`\n  Farm Games Wiki Editor running at:`);
+  console.log(`    Local:   http://localhost:${PORT}`);
+  if (localIP) console.log(`    Network: http://${localIP}:${PORT}`);
+  console.log('');
   try {
     const open = (await import('open')).default;
-    open(url);
+    open(`http://localhost:${PORT}`);
   } catch {
     console.log('  (could not auto-open browser)');
   }
