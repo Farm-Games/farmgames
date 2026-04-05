@@ -173,6 +173,14 @@ body {
   color: #222 !important;
 }
 
+.toastui-editor-ww-container .ProseMirror img {
+  max-width: 250px;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .toastui-editor-md-container .CodeMirror .cm-header { color: #0d1f31 !important; }
 .toastui-editor-md-container .CodeMirror .cm-link { color: #4a90e2 !important; }
 .toastui-editor-md-container .CodeMirror .cm-string { color: #388e3c !important; }
@@ -347,6 +355,19 @@ body {
   border: 1px solid #1a3a5c;
   border-radius: 4px;
   padding: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.deploy-actions-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.deploy-file-cb {
+  accent-color: var(--deep-blue);
+  margin-right: 4px;
 }
 
 .deploy-summary-group {
@@ -377,6 +398,13 @@ body {
 
 .deploy-summary-list li {
   padding: 2px 0;
+}
+
+.deploy-summary-list li label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
 }
 
 .deploy-summary-list li .type-badge {
@@ -552,7 +580,10 @@ body {
 
 .image-popover {
   display: none;
-  position: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
   z-index: 250;
   background: #132f4c;
   border: 1px solid #1a3a5c;
@@ -650,7 +681,10 @@ body {
 
 .link-popover {
   display: none;
-  position: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
   z-index: 250;
   background: #132f4c;
   border: 1px solid #1a3a5c;

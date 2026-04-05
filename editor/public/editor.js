@@ -9,6 +9,7 @@
   let previewTimer = null;
   let activePopoverImg = null;
   let activePopoverLink = null;
+  let savedContent = '';
 
   // ===== DOM =====
   const $ = (sel) => document.querySelector(sel);
@@ -54,6 +55,20 @@
   const linkPopoverUrl = $('#linkPopoverUrl');
 
   // ===== HELPERS =====
+
+  function getTrueMarkdown() {
+    let md = editor.getMarkdown();
+    if (!savedContent) return md;
+    const imgRegex = /<img[^>]*src="([^"]*)"[^>]*class="[^"]*"[^>]*\/?>/gi;
+    let match;
+    while ((match = imgRegex.exec(savedContent)) !== null) {
+      const src = match[1];
+      const escapedSrc = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      md = md.replace(new RegExp(`<img[^>]*src="${escapedSrc}"[^>]*/?>`, 'i'), match[0]);
+      md = md.replace(new RegExp(`!\\[[^\\]]*\\]\\(${escapedSrc}\\)`), match[0]);
+    }
+    return md;
+  }
 
   function slugToTitle(slug) {
     if (slug === 'index') return 'Homepage';
@@ -182,17 +197,16 @@
   }
 
   function getImageClassesFromMarkdown(src) {
-    const md = editor.getMarkdown();
+    const md = savedContent || editor.getMarkdown();
     const escapedSrc = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const htmlMatch = md.match(new RegExp(`<img[^>]*src="${escapedSrc}"[^>]*class="([^"]*)"[^>]*/?>`, 'i'));
     return htmlMatch ? htmlMatch[1] : '';
   }
 
+  let cleanupImagePopover = null;
+
   function showImagePopover(imgEl) {
     activePopoverImg = imgEl;
-    const rect = imgEl.getBoundingClientRect();
-    imagePopover.style.top = (rect.bottom + window.scrollY + 4) + 'px';
-    imagePopover.style.left = (rect.left + window.scrollX) + 'px';
     popoverAltInput.value = imgEl.alt || '';
 
     const src = imgEl.getAttribute('src') || '';
@@ -203,11 +217,22 @@
     $('#popoverAlign').value = alignMatch ? alignMatch[0] : '';
 
     imagePopover.classList.add('active');
+
+    if (cleanupImagePopover) cleanupImagePopover();
+    cleanupImagePopover = FloatingUIDOM.autoUpdate(imgEl, imagePopover, () => {
+      FloatingUIDOM.computePosition(imgEl, imagePopover, {
+        placement: 'bottom-start',
+        middleware: [FloatingUIDOM.offset(4), FloatingUIDOM.flip(), FloatingUIDOM.shift({ padding: 8 })],
+      }).then(({ x, y }) => {
+        Object.assign(imagePopover.style, { left: x + 'px', top: y + 'px' });
+      });
+    });
   }
 
   function hideImagePopover() {
     imagePopover.classList.remove('active');
     activePopoverImg = null;
+    if (cleanupImagePopover) { cleanupImagePopover(); cleanupImagePopover = null; }
   }
 
   let replaceTarget = null;
@@ -251,25 +276,10 @@
     showToast('Image removed', 'success');
   });
 
-  $('#popoverSaveAlt').addEventListener('click', () => {
-    if (!activePopoverImg) return;
-    const md = editor.getMarkdown();
+  $('#popoverSave').addEventListener('click', async () => {
+    if (!activePopoverImg || !currentPage) return;
     const src = activePopoverImg.getAttribute('src');
     const newAlt = popoverAltInput.value;
-    const updated = md.replace(
-      new RegExp(`!\\[([^\\]]*)\\]\\(${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\)`),
-      `![${newAlt}](${src})`
-    );
-    editor.setMarkdown(updated);
-    hideImagePopover();
-    showToast('Alt text updated', 'success');
-  });
-
-  $('#popoverApplyLayout').addEventListener('click', () => {
-    if (!activePopoverImg) return;
-    const md = editor.getMarkdown();
-    const src = activePopoverImg.getAttribute('src');
-    const alt = activePopoverImg.alt || '';
     const size = $('#popoverSize').value;
     const align = $('#popoverAlign').value;
     const classes = [size, align].filter(Boolean).join(' ');
@@ -278,41 +288,72 @@
     const mdImgRegex = new RegExp(`\\n?!\\[([^\\]]*)\\]\\(${escapedSrc}\\)\\n?`);
     const htmlImgRegex = new RegExp(`\\n?<img[^>]*src="${escapedSrc}"[^>]*/?>\\n?`, 'i');
 
-    let updated = md;
-    if (classes) {
-      const htmlTag = `\n<img src="${src}" alt="${alt}" class="${classes}" />\n`;
-      if (htmlImgRegex.test(md)) {
-        updated = md.replace(htmlImgRegex, htmlTag);
-      } else {
-        updated = md.replace(mdImgRegex, htmlTag);
-      }
-    } else {
-      const plainImg = `\n![${alt}](${src})\n`;
-      if (htmlImgRegex.test(md)) {
-        updated = md.replace(htmlImgRegex, plainImg);
-      }
-    }
+    try {
+      const page = await api('/api/pages/' + encodeURIComponent(currentPage));
+      let md = page.content;
 
-    editor.setMarkdown(updated);
-    hideImagePopover();
-    showToast('Image layout updated', 'success');
+      if (classes) {
+        const htmlTag = `\n<img src="${src}" alt="${newAlt}" class="${classes}" />\n`;
+        if (htmlImgRegex.test(md)) {
+          md = md.replace(htmlImgRegex, htmlTag);
+        } else {
+          md = md.replace(mdImgRegex, htmlTag);
+        }
+      } else {
+        const plainImg = `\n![${newAlt}](${src})\n`;
+        if (htmlImgRegex.test(md)) {
+          md = md.replace(htmlImgRegex, plainImg);
+        } else {
+          md = md.replace(
+            new RegExp(`!\\[([^\\]]*)\\]\\(${escapedSrc}\\)`),
+            `![${newAlt}](${src})`
+          );
+        }
+      }
+
+      await api('/api/pages/' + encodeURIComponent(currentPage), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: md }),
+      });
+
+      savedContent = md;
+      editor.setMarkdown(md);
+      dirty = false;
+      updateUI();
+      hideImagePopover();
+      renderPreview();
+      showToast('Image updated', 'success');
+    } catch (err) {
+      showToast('Save failed: ' + err.message, 'error');
+    }
   });
 
   // ===== LINK POPOVER =====
 
+  let cleanupLinkPopover = null;
+
   function showLinkPopover(linkEl) {
     activePopoverLink = linkEl;
-    const rect = linkEl.getBoundingClientRect();
-    linkPopover.style.top = (rect.bottom + window.scrollY + 4) + 'px';
-    linkPopover.style.left = (rect.left + window.scrollX) + 'px';
     linkPopoverText.value = linkEl.textContent || '';
     linkPopoverUrl.value = linkEl.getAttribute('href') || '';
     linkPopover.classList.add('active');
+
+    if (cleanupLinkPopover) cleanupLinkPopover();
+    cleanupLinkPopover = FloatingUIDOM.autoUpdate(linkEl, linkPopover, () => {
+      FloatingUIDOM.computePosition(linkEl, linkPopover, {
+        placement: 'bottom-start',
+        middleware: [FloatingUIDOM.offset(4), FloatingUIDOM.flip(), FloatingUIDOM.shift({ padding: 8 })],
+      }).then(({ x, y }) => {
+        Object.assign(linkPopover.style, { left: x + 'px', top: y + 'px' });
+      });
+    });
   }
 
   function hideLinkPopover() {
     linkPopover.classList.remove('active');
     activePopoverLink = null;
+    if (cleanupLinkPopover) { cleanupLinkPopover(); cleanupLinkPopover = null; }
   }
 
   $('#linkPopoverSave').addEventListener('click', () => {
@@ -396,7 +437,7 @@
   }
 
   async function renderPreview() {
-    const markdown = editor.getMarkdown();
+    const markdown = getTrueMarkdown();
     try {
       const html = await api('/api/preview', {
         method: 'POST',
@@ -466,7 +507,8 @@
     try {
       const data = await api('/api/pages/' + encodeURIComponent(name));
       currentPage = data.name;
-      editor.setMarkdown(data.content || '');
+      savedContent = data.content || '';
+      editor.setMarkdown(savedContent);
       dirty = false;
       updateUI();
       renderPreview();
@@ -490,11 +532,13 @@
       return;
     }
     try {
+      const content = getTrueMarkdown();
       await api('/api/pages/' + encodeURIComponent(currentPage), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editor.getMarkdown() }),
+        body: JSON.stringify({ content }),
       });
+      savedContent = content;
       dirty = false;
       updateUI();
       showToast('Saved: ' + slugToTitle(currentPage), 'success');
@@ -762,10 +806,19 @@
 
   // ===== DEPLOY =====
 
+  function getSelectedDeployFiles() {
+    return Array.from($('#deploySummary').querySelectorAll('.deploy-file-cb:checked')).map((cb) => cb.value);
+  }
+
   async function deploy() {
     const msg = deployMessage.value.trim();
     if (!msg) {
       showDeployFeedback('Please describe what you changed.', 'error');
+      return;
+    }
+    const files = getSelectedDeployFiles();
+    if (files.length === 0) {
+      showDeployFeedback('No files selected to deploy.', 'error');
       return;
     }
     const btn = $('#btnDeploy');
@@ -776,13 +829,14 @@
       const result = await api('/api/deploy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg }),
+        body: JSON.stringify({ message: msg, files }),
       });
       if (result.deployed) {
         showDeployFeedback('Deployed successfully! Your changes are now live.', 'success');
         deployMessage.value = '';
         dirty = false;
         updateUI();
+        refreshDeploySummary();
       } else {
         showDeployFeedback(result.message || 'Nothing to deploy.', 'error');
       }
@@ -790,7 +844,37 @@
       showDeployFeedback('Deploy failed: ' + err.message, 'error');
     }
     btn.disabled = false;
-    btn.textContent = 'Deploy Changes';
+    btn.textContent = 'Deploy Selected';
+  }
+
+  async function revertSelected() {
+    const files = getSelectedDeployFiles();
+    if (files.length === 0) {
+      showDeployFeedback('No files selected to revert.', 'error');
+      return;
+    }
+    if (!confirm('Revert ' + files.length + ' file(s)? This will discard your changes to these files.')) return;
+    try {
+      await api('/api/deploy/revert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files }),
+      });
+      showDeployFeedback('Reverted ' + files.length + ' file(s).', 'success');
+      refreshDeploySummary();
+      if (currentPage) {
+        const data = await api('/api/pages/' + encodeURIComponent(currentPage)).catch(() => null);
+        if (data) {
+          savedContent = data.content || '';
+          editor.setMarkdown(savedContent);
+          dirty = false;
+          updateUI();
+          renderPreview();
+        }
+      }
+    } catch (err) {
+      showDeployFeedback('Revert failed: ' + err.message, 'error');
+    }
   }
 
   function showDeployFeedback(msg, type) {
@@ -822,13 +906,11 @@
   btnDelete.addEventListener('click', deletePage);
   $('#btnLinkAcross').addEventListener('click', openLinkAcrossModal);
 
-  btnDeployOpen.addEventListener('click', async () => {
-    deployMessage.value = '';
-    deployFeedback.textContent = '';
-    deployFeedback.className = 'deploy-feedback';
+  async function refreshDeploySummary() {
     const summary = $('#deploySummary');
+    const actionsRow = $('#deployActionsRow');
     summary.innerHTML = '<p class="deploy-hint">Checking for changes...</p>';
-    openModalFn(deployModal);
+    actionsRow.style.display = 'none';
     try {
       const data = await api('/api/deploy/summary');
       const { created, edited, deleted } = data;
@@ -837,25 +919,36 @@
         return;
       }
       let html = '';
-      if (created.length) {
-        html += renderSummaryGroup('Created', 'created', created);
-      }
-      if (edited.length) {
-        html += renderSummaryGroup('Edited', 'edited', edited);
-      }
-      if (deleted.length) {
-        html += renderSummaryGroup('Deleted', 'deleted', deleted);
-      }
+      if (created.length) html += renderSummaryGroup('Created', 'created', created);
+      if (edited.length) html += renderSummaryGroup('Edited', 'edited', edited);
+      if (deleted.length) html += renderSummaryGroup('Deleted', 'deleted', deleted);
       summary.innerHTML = html;
+      actionsRow.style.display = 'flex';
     } catch {
       summary.innerHTML = '<p class="deploy-hint">Could not load change summary.</p>';
     }
+  }
+
+  btnDeployOpen.addEventListener('click', async () => {
+    deployMessage.value = '';
+    deployFeedback.textContent = '';
+    deployFeedback.className = 'deploy-feedback';
+    openModalFn(deployModal);
+    await refreshDeploySummary();
     setTimeout(() => deployMessage.focus(), 100);
   });
 
+  $('#btnDeploySelectAll').addEventListener('click', () => {
+    $('#deploySummary').querySelectorAll('.deploy-file-cb').forEach((cb) => (cb.checked = true));
+  });
+  $('#btnDeployDeselectAll').addEventListener('click', () => {
+    $('#deploySummary').querySelectorAll('.deploy-file-cb').forEach((cb) => (cb.checked = false));
+  });
+  $('#btnRevertSelected').addEventListener('click', revertSelected);
+
   function renderSummaryGroup(label, cls, items) {
     const list = items
-      .map((i) => `<li>${i.label}<span class="type-badge">${i.type}</span></li>`)
+      .map((i) => `<li><label><input type="checkbox" class="deploy-file-cb" value="${i.file}" checked />${i.label}<span class="type-badge">${i.type}</span></label></li>`)
       .join('');
     return `<div class="deploy-summary-group">
       <div class="deploy-summary-label ${cls}">${label} (${items.length})</div>

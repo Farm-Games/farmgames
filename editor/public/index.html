@@ -109,7 +109,7 @@
 
   <!-- ===== DEPLOY MODAL ===== -->
   <div class="modal-overlay" id="deployModal">
-    <div class="modal modal-sm">
+    <div class="modal modal-lg">
       <div class="modal-header">
         <h2>Deploy to Website</h2>
         <button class="modal-close" data-close="deployModal">&times;</button>
@@ -118,9 +118,14 @@
         <div class="deploy-summary" id="deploySummary">
           <p class="deploy-hint">Checking for changes...</p>
         </div>
+        <div class="deploy-actions-row" id="deployActionsRow" style="display:none">
+          <button id="btnDeploySelectAll" class="btn-sm">Select All</button>
+          <button id="btnDeployDeselectAll" class="btn-sm">Deselect All</button>
+          <button id="btnRevertSelected" class="btn-sm btn-danger">Revert Selected</button>
+        </div>
         <label for="deployMessage">Describe what you changed:</label>
         <input type="text" id="deployMessage" placeholder="e.g. Updated tournament results" autocomplete="off" />
-        <button id="btnDeploy" class="btn-primary btn-deploy">Deploy Changes</button>
+        <button id="btnDeploy" class="btn-primary btn-deploy">Deploy Selected</button>
         <div class="deploy-feedback" id="deployFeedback"></div>
       </div>
     </div>
@@ -169,8 +174,8 @@
       <button id="popoverDelete" class="btn-sm btn-danger">Delete</button>
     </div>
     <div class="popover-row">
+      <label>Alt</label>
       <input type="text" id="popoverAltInput" placeholder="Alt text..." />
-      <button id="popoverSaveAlt" class="btn-sm">Save</button>
     </div>
     <div class="popover-row">
       <label>Size</label>
@@ -192,7 +197,7 @@
       </select>
     </div>
     <div class="popover-row popover-actions">
-      <button id="popoverApplyLayout" class="btn-sm">Apply Layout</button>
+      <button id="popoverSave" class="btn-sm">Save</button>
     </div>
   </div>
 
@@ -218,6 +223,8 @@
   <!-- ===== TOAST / NOTIFICATION ===== -->
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.6"></script>
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <script src="editor.js"></script>
 </body>

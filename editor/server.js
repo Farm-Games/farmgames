@@ -235,15 +235,40 @@ app.get('/api/deploy/summary', (req, res) => {
           ? file.replace('src/images/', '')
           : file;
       const type = isPage ? 'page' : isImage ? 'image' : 'file';
+      const entry = { label, type, file };
       if (code === '??' || code.includes('A')) {
-        summary.created.push({ label, type });
+        summary.created.push(entry);
       } else if (code.includes('D')) {
-        summary.deleted.push({ label, type });
+        summary.deleted.push(entry);
       } else {
-        summary.edited.push({ label, type });
+        summary.edited.push(entry);
       }
     }
     res.json(summary);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/deploy/revert', (req, res) => {
+  const { files } = req.body;
+  if (!files || !files.length) return res.status(400).json({ error: 'No files specified' });
+  try {
+    const reverted = [];
+    for (const file of files) {
+      const safe = file.replace(/"/g, '');
+      try {
+        runGit(`checkout HEAD -- "${safe}"`);
+        reverted.push(safe);
+      } catch {
+        const fullPath = path.join(ROOT_DIR, safe);
+        if (fs.existsSync(fullPath)) {
+          fs.unlinkSync(fullPath);
+          reverted.push(safe + ' (removed)');
+        }
+      }
+    }
+    res.json({ reverted });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -269,6 +294,7 @@ function cleanUnusedImages() {
 
 app.post('/api/deploy', (req, res) => {
   const message = (req.body.message || 'Update from editor').replace(/"/g, "'");
+  const selectedFiles = req.body.files;
   const steps = [];
   try {
     const removed = cleanUnusedImages();
@@ -276,8 +302,14 @@ app.post('/api/deploy', (req, res) => {
       steps.push('Removed ' + removed + ' unused image(s)');
     }
 
-    runGit('add -A');
-    steps.push('Staged all changes');
+    if (selectedFiles && selectedFiles.length > 0) {
+      const safeFiles = selectedFiles.map((f) => `"${f.replace(/"/g, '')}"`).join(' ');
+      runGit(`add ${safeFiles}`);
+      steps.push('Staged ' + selectedFiles.length + ' file(s)');
+    } else {
+      runGit('add -A');
+      steps.push('Staged all changes');
+    }
 
     const status = runGit('status --porcelain');
     if (!status.trim()) {
