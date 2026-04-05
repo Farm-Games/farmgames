@@ -160,6 +160,67 @@ body > .nav {
   margin-bottom: 0;
 }
 
+/* ----- Table Styling ----- */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95em;
+}
+
+th, td {
+  border: 1px solid var(--gray-light);
+  padding: 10px 14px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--dark-slate);
+  color: var(--off-white);
+  font-family: 'Jersey 15', serif;
+  font-weight: 400;
+}
+
+tr:nth-child(even) {
+  background-color: var(--muted-coral);
+}
+
+/* ----- Code Styling ----- */
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  background-color: #e0e8f0;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre {
+  background-color: var(--dark-slate);
+  color: var(--off-white);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 20px 0;
+  line-height: 1.5;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+  color: inherit;
+}
+
+/* ----- Task List Styling ----- */
+.task-list-item {
+  list-style-type: none !important;
+}
+
 /* ----- Gallery Layout ----- */
 gallery,
 .gallery {

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm Games Wiki Editor</title>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="editor.css" />
+</head>
+<body>
+  <!-- ===== TOOLBAR ===== -->
+  <header class="toolbar">
+    <div class="toolbar-left">
+      <h1 class="toolbar-title">Farm Games Wiki</h1>
+      <span class="toolbar-page-name" id="currentPageLabel">No page open</span>
+    </div>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">&#9776;</button>
+    <nav class="toolbar-actions" id="toolbarActions">
+      <div class="toolbar-group">
+        <button id="btnNew" title="New Page">&#65291; New</button>
+        <button id="btnOpen" title="Open Page">&#128194; Open</button>
+        <button id="btnSave" title="Save Page" disabled>&#128190; Save</button>
+        <button id="btnDelete" title="Delete Page" disabled>&#128465; Delete</button>
+      </div>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-group">
+        <button id="btnDeployOpen" title="Deploy changes to the live website">&#128640; Deploy</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="editor-layout">
+    <div class="editor-pane" id="editorPane">
+      <div id="editor"></div>
+    </div>
+    <div class="preview-pane" id="previewPane">
+      <iframe id="previewFrame"></iframe>
+    </div>
+  </div>
+
+  <!-- ===== OPEN PAGE MODAL ===== -->
+  <div class="modal-overlay" id="openModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Open Page</h2>
+        <button class="modal-close" data-close="openModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="openSearch" placeholder="Filter pages..." autocomplete="off" />
+        <label class="filter-toggle">
+          <input type="checkbox" id="hideFileStubs" />
+          Hide file_* stub pages
+        </label>
+        <ul class="page-list" id="pageList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NEW PAGE MODAL ===== -->
+  <div class="modal-overlay" id="newModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>New Page</h2>
+        <button class="modal-close" data-close="newModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="newPageName">Page name (lowercase, underscores for spaces):</label>
+        <input type="text" id="newPageName" placeholder="e.g. my_new_page" autocomplete="off" />
+        <p class="input-hint" id="newPageHint"></p>
+        <button id="btnCreatePage" class="btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LINK PAGE MODAL ===== -->
+  <div class="modal-overlay" id="linkPageModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="linkModalTitle">Insert Link</h2>
+        <button class="modal-close" data-close="linkPageModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="link-mode-tabs">
+          <button class="link-mode-tab active" data-mode="wiki">Wiki Page</button>
+          <button class="link-mode-tab" data-mode="url">Web URL</button>
+        </div>
+        <div id="linkModeWiki">
+          <input type="text" id="linkPageSearch" placeholder="Filter pages..." autocomplete="off" />
+          <label class="filter-toggle">
+            <input type="checkbox" id="linkPageHideStubs" checked />
+            Hide file_* stub pages
+          </label>
+          <ul class="page-list" id="linkPageList"></ul>
+        </div>
+        <div id="linkModeUrl" style="display:none">
+          <input type="text" id="linkUrlText" placeholder="Link text (e.g. Google)" autocomplete="off" />
+          <input type="text" id="linkUrlHref" placeholder="URL (e.g. https://example.com)" autocomplete="off" />
+          <button id="btnInsertUrl" class="btn-primary">Insert Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DEPLOY MODAL ===== -->
+  <div class="modal-overlay" id="deployModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>Deploy to Website</h2>
+        <button class="modal-close" data-close="deployModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="deploy-summary" id="deploySummary">
+          <p class="deploy-hint">Checking for changes...</p>
+        </div>
+        <label for="deployMessage">Describe what you changed:</label>
+        <input type="text" id="deployMessage" placeholder="e.g. Updated tournament results" autocomplete="off" />
+        <button id="btnDeploy" class="btn-primary btn-deploy">Deploy Changes</button>
+        <div class="deploy-feedback" id="deployFeedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== IMAGE POPOVER ===== -->
+  <div class="image-popover" id="imagePopover">
+    <div class="popover-row">
+      <button id="popoverReplace" class="btn-sm">Replace</button>
+      <button id="popoverDelete" class="btn-sm btn-danger">Delete</button>
+    </div>
+    <div class="popover-row">
+      <input type="text" id="popoverAltInput" placeholder="Alt text..." />
+      <button id="popoverSaveAlt" class="btn-sm">Save</button>
+    </div>
+  </div>
+
+  <!-- ===== LINK POPOVER ===== -->
+  <div class="link-popover" id="linkPopover">
+    <div class="popover-row">
+      <label>Text</label>
+      <input type="text" id="linkPopoverText" placeholder="Link text..." />
+    </div>
+    <div class="popover-row">
+      <label>URL</label>
+      <input type="text" id="linkPopoverUrl" placeholder="Link URL..." />
+    </div>
+    <div class="popover-row popover-actions">
+      <button id="linkPopoverSave" class="btn-sm">Save</button>
+      <button id="linkPopoverDelete" class="btn-sm btn-danger">Remove Link</button>
+    </div>
+  </div>
+
+  <!-- ===== HIDDEN FILE INPUTS ===== -->
+  <input type="file" id="imageReplaceInput" accept="image/*" style="display:none" />
+
+  <!-- ===== TOAST / NOTIFICATION ===== -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

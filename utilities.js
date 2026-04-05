@@ -124,6 +124,20 @@ const copyIntroFilesToOutputFolder = (outputFolder) => {
   copyFileToOutputFolder(__dirname + '/src' + '/intro.mp3', outputFolder);
 };
 
+const copyImageFilesToOutputFolder = (outputFolder) => {
+  const imagesDir = __dirname + '/src/images';
+  const outputImagesDir = outputFolder + 'images/';
+  if (!fs.existsSync(imagesDir)) return;
+  if (!fs.existsSync(outputImagesDir)) {
+    fs.mkdirSync(outputImagesDir, { recursive: true });
+  }
+  const files = fs.readdirSync(imagesDir).filter((f) => /\.(jpe?g|png|gif|svg|webp)$/i.test(f));
+  files.forEach((file) => {
+    fs.copyFileSync(imagesDir + '/' + file, outputImagesDir + file);
+    console.log(`Image ${file} has been copied`);
+  });
+};
+
 const isLinkForImage = (link) => link.match(/\.(jpeg|jpg|gif|png|svg)$/i);
 
 const isLinkForPage = (link) => !isLinkForImage(link);
@@ -212,6 +226,7 @@ exports.replaceBold = replaceBold;
 exports.replaceLists = replaceLists;
 exports.copyCSSFilesToOutputFolder = copyCSSFilesToOutputFolder;
 exports.copyIntroFilesToOutputFolder = copyIntroFilesToOutputFolder;
+exports.copyImageFilesToOutputFolder = copyImageFilesToOutputFolder;
 exports.clearOutputFolder = clearOutputFolder;
 exports.replaceGalleryLinks = replaceGalleryLinks;
 exports.sanitizeLink = sanitizeLink;
