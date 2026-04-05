@@ -2,7 +2,7 @@
 
 Resler took up coaching for a while in the late 2000's, coaching the [San Diego Novas](#a) for several campaigns until his retirement. He is currently a Farm Games reporter, reading books and catching bugs on live TV. Resler was a member of the [Denley Roundtable](#a) from 2014 until 2016, before becoming a part of the three-man show [Old Time Cummers](#a), alongside [Peter O'Don Patrion](peter_o_don_patrion) and [Jimmy Swallow](#a) in late 2016. Dean also has his show [Dean Reads](#a) wherein he teaches children about bugs and Jesus. Resler has a very large pig named [Gordon](#a), whom he brings to the studio frequently and serves as a set piece during the show. Gordon has become a celebrity himself, being the most famous pig in Canada.
 
-After years of dickteasing the beginning of his career as a General Manager, Resler was hired as the GM of the St. John's Mariners after the 2022 campaign. His first move as General Manager was the firing of long-time coach Bundy Bill, and replacing him with legendary benchman Art Dowser.
+After years of dickteasing the beginning of his career as a General Manager, Resler was hired as the GM of the [St. John's Mariners](st__john_s_mariners) after the 2022 campaign. His first move as General Manager was the firing of long-time coach Bundy Bill, and replacing him with legendary benchman Art Dowser.
 
 ![Dean Resler, pictured in the Farm Games museum.](/images/dean_resler.jpg)
 
