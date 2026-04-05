@@ -712,11 +712,22 @@ body {
   margin-top: 2px;
 }
 
+/* ===== MOBILE VIEW TOGGLE ===== */
+
+.mobile-toggle {
+  display: none;
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 768px) {
   .hamburger {
     display: block;
+  }
+
+  .toolbar {
+    position: sticky;
+    top: 0;
   }
 
   .toolbar-actions {
@@ -747,17 +758,65 @@ body {
     margin: 4px 0;
   }
 
+  .toolbar-page-name {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: flex;
+    flex-shrink: 0;
+    background: #0a1929;
+    border-bottom: 1px solid #1a3a5c;
+  }
+
+  .mobile-toggle-btn {
+    flex: 1;
+    padding: 8px !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.85em !important;
+    background: transparent !important;
+    color: var(--gray-light) !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    cursor: pointer;
+  }
+
+  .mobile-toggle-btn.active {
+    color: var(--deep-blue) !important;
+    border-bottom-color: var(--deep-blue) !important;
+  }
+
+  body {
+    height: 100dvh;
+  }
+
   .editor-layout {
     flex-direction: column;
+    min-height: 0;
+  }
+
+  .editor-pane {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .editor-pane .toastui-editor-defaultUI {
+    min-height: 0 !important;
+  }
+
+  .editor-pane.mobile-hidden {
+    display: none;
   }
 
   .preview-pane {
     border-left: none;
-    border-top: 2px solid #1a3a5c;
-    max-height: 40vh;
+    flex: 1;
+    min-height: 0;
   }
 
-  .toolbar-page-name {
+  .preview-pane.mobile-hidden {
     display: none;
   }
 }

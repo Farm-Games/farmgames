@@ -15,8 +15,7 @@ const PORT = 3456;
 
 const converter = new showdown.Converter(SHOWDOWN_OPTIONS);
 
-const previewExtraHead = `
-        <base href="http://localhost:${PORT}/" />
+const previewExtraStyle = `
         <style>
           body { margin: 0 auto; padding: 0 10px; }
           article { margin-top: 10px; }
@@ -181,13 +180,15 @@ app.post('/api/pages/link', (req, res) => {
 
 app.post('/api/preview', (req, res) => {
   const { markdown, pageName } = req.body;
+  const host = req.headers.host || `localhost:${PORT}`;
+  const baseTag = `<base href="http://${host}/" />`;
   const html = converter.makeHtml(markdown || '');
   res.send(renderPage({
     cssRoot: '/site-css/',
     navRoot: '#',
     fileName: pageName || 'Untitled',
     content: html,
-    extraHead: previewExtraHead,
+    extraHead: baseTag + previewExtraStyle,
   }));
 });
 

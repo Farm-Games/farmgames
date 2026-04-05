@@ -408,6 +408,7 @@
 
   function openModalFn(modal) {
     modal.classList.add('active');
+    closeToolbarMenu();
   }
 
   function closeModalFn(modal) {
@@ -975,8 +976,19 @@
   });
 
   // Hamburger
-  hamburgerBtn.addEventListener('click', () => {
+  function closeToolbarMenu() {
+    toolbarActions.classList.remove('open');
+  }
+
+  hamburgerBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     toolbarActions.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!toolbarActions.contains(e.target) && e.target !== hamburgerBtn) {
+      closeToolbarMenu();
+    }
   });
 
   // Open page modal
@@ -1019,6 +1031,27 @@
       e.returnValue = '';
     }
   });
+
+  // ===== MOBILE VIEW TOGGLE =====
+  const editorPane = $('#editorPane');
+  const previewPane = $('#previewPane');
+
+  $$('.mobile-toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const view = btn.getAttribute('data-view');
+      $$('.mobile-toggle-btn').forEach((b) => b.classList.toggle('active', b === btn));
+      if (view === 'editor') {
+        editorPane.classList.remove('mobile-hidden');
+        previewPane.classList.add('mobile-hidden');
+      } else {
+        editorPane.classList.add('mobile-hidden');
+        previewPane.classList.remove('mobile-hidden');
+        renderPreview();
+      }
+    });
+  });
+
+  previewPane.classList.add('mobile-hidden');
 
   // ===== INIT =====
   updateUI();
