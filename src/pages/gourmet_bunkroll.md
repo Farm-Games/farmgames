@@ -1,0 +1,1 @@
+Gourmet Bunkroll was a tight holed right winger in the Farm Games ice hockey league from 1946 until 1962, when he was stuck by a rogue bullet fired by the would-be assassin of then Red Rooster team president Grint Gayguy.
