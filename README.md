@@ -56,19 +56,27 @@ cat ~/.ssh/farmgames.pub
 
 Copy the output and add it as a deploy key on the GitHub repo (Settings > Deploy keys > Add deploy key). Check **"Allow write access"**.
 
-Create an SSH config file:
+Create the SSH config file. In **Git Bash**, run this (it writes the file directly, avoiding Notepad adding `.txt`):
 
 ```
-notepad ~/.ssh/config
-```
-
-Paste this, save, and close:
-
-```
+cat > ~/.ssh/config << 'EOF'
 Host github-farmgames
   HostName github.com
   User git
   IdentityFile ~/.ssh/farmgames
+EOF
+```
+
+Verify it was created correctly:
+
+```
+cat ~/.ssh/config
+```
+
+You should see the three lines above. If you already have a `config.txt` file from a previous attempt, delete it:
+
+```
+rm -f ~/.ssh/config.txt
 ```
 
 #### 4. Clone and run
