@@ -149,10 +149,11 @@
       ['hr', 'quote'],
       ['ul', 'ol', 'task'],
       ['table', 'image', {
-        name: 'wikiLink', 
+        name: 'wikiLink',
         tooltip: 'Link to Wiki Page',
         text: '',
         className: 'toastui-editor-toolbar-icons link',
+        command: 'wikiLink',
       }],
       ['code', 'codeblock'],
     ],
@@ -167,6 +168,9 @@
       },
     },
   });
+
+  editor.addCommand('wysiwyg', 'wikiLink', () => { openLinkPageModal(); return true; });
+  editor.addCommand('markdown', 'wikiLink', () => { openLinkPageModal(); return true; });
 
   editor.on('change', () => {
     dirty = true;
@@ -396,12 +400,6 @@
       hideLinkPopover();
     }
   });
-
-  // Wire up wiki link toolbar button
-  const wikiBtn = document.querySelector('.toastui-editor-toolbar-icons.link');
-  if (wikiBtn) {
-    wikiBtn.addEventListener('click', openLinkPageModal);
-  }
 
   // Initialize popovers after editor renders
   setTimeout(setupPopovers, 500);
