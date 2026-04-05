@@ -56,36 +56,22 @@ cat ~/.ssh/farmgames.pub
 
 Copy the output and add it as a deploy key on the GitHub repo (Settings > Deploy keys > Add deploy key). Check **"Allow write access"**.
 
-Create the SSH config file. In **Git Bash**, run this (it writes the file directly, avoiding Notepad adding `.txt`):
+Test that the key works:
 
 ```
-cat > ~/.ssh/config << 'EOF'
-Host github-farmgames
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/farmgames
-EOF
+ssh -i ~/.ssh/farmgames -T git@github.com
 ```
 
-Verify it was created correctly:
-
-```
-cat ~/.ssh/config
-```
-
-You should see the three lines above. If you already have a `config.txt` file from a previous attempt, delete it:
-
-```
-rm -f ~/.ssh/config.txt
-```
+You should see: `Hi farmgames! You've successfully authenticated...`
 
 #### 4. Clone and run
 
-In **Git Bash** or **Command Prompt**:
+In **Git Bash**:
 
 ```
-git clone git@github-farmgames:Farm-Games/farmgames.git
+git clone git@github.com:Farm-Games/farmgames.git
 cd farmgames
+git config core.sshCommand "ssh -i ~/.ssh/farmgames"
 npm install
 npm run editor
 ```
