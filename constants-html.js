@@ -1,6 +1,6 @@
 const OUTPUT_FOLDER = __dirname + '/public/';
 const INPUT_FOLDER = __dirname + '/src/pages/';
-const WEB_ROOT = '/';
+const WEB_ROOT = '/farmgames/';
 const SITENAME = 'Farm Games Wiki';
 
 exports.OUTPUT_FOLDER = OUTPUT_FOLDER;
