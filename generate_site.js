@@ -10,6 +10,7 @@ const converter = new showdown.Converter(SHOWDOWN_OPTIONS);
 const filesToSelectOptions = (files) =>
   files
     .map((file) => file.replace('.md', ''))
+    .filter((file) => !file.startsWith('file_'))
     .map((file) => ({
       value: file,
       label: fileNameToTitle(file),
