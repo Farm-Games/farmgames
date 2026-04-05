@@ -70,3 +70,4 @@ copyCSSFilesToOutputFolder(OUTPUT_FOLDER);
 copyIntroFilesToOutputFolder(OUTPUT_FOLDER);
 copyImageFilesToOutputFolder(OUTPUT_FOLDER);
 convertMarkdownToHTML();
+fs.writeFileSync(OUTPUT_FOLDER + 'CNAME', 'farmgames.uk');
