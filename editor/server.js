@@ -167,10 +167,33 @@ app.get('/api/deploy/summary', (req, res) => {
   }
 });
 
+function cleanUnusedImages() {
+  if (!fs.existsSync(IMAGES_DIR)) return 0;
+  const imageFiles = fs.readdirSync(IMAGES_DIR).filter((f) => /\.(jpe?g|png|gif|svg|webp)$/i.test(f));
+  if (imageFiles.length === 0) return 0;
+
+  const pages = fs.readdirSync(PAGES_DIR).filter((f) => f.endsWith('.md'));
+  const allContent = pages.map((f) => fs.readFileSync(path.join(PAGES_DIR, f), 'utf8')).join('\n');
+
+  let removed = 0;
+  for (const img of imageFiles) {
+    if (!allContent.includes(img)) {
+      fs.unlinkSync(path.join(IMAGES_DIR, img));
+      removed++;
+    }
+  }
+  return removed;
+}
+
 app.post('/api/deploy', (req, res) => {
   const message = (req.body.message || 'Update from editor').replace(/"/g, "'");
   const steps = [];
   try {
+    const removed = cleanUnusedImages();
+    if (removed > 0) {
+      steps.push('Removed ' + removed + ' unused image(s)');
+    }
+
     runGit('add -A');
     steps.push('Staged all changes');
 

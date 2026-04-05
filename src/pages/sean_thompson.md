@@ -2,7 +2,7 @@
 
 Thompson has very potent Observation Haki which allows to make top notch plays on the ice. His brother, [Jamie Thompson](jamie_thompson), also has a high level of Observation Haki but he is, unlike Sean, a member of [the gays](the_gays).
 
-![Sean Thompson rocking his signature George Jeff haircut](/images/000046230008.jpg)
+![Sean Thompson rocking his signature George Jeff haircut](/images/000065110020.jpg)
 
 > Sean Thompson rocking his signature George Jeff haircut
 
