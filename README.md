@@ -56,7 +56,7 @@ cat ~/.ssh/farmgames.pub
 
 Copy the output and add it as a deploy key on the GitHub repo (Settings > Deploy keys > Add deploy key). Check **"Allow write access"**.
 
-Test that the key works:
+Test that the key works (run this in **Git Bash**):
 
 ```
 ssh -i ~/.ssh/farmgames -T git@github.com
@@ -66,15 +66,17 @@ You should see: `Hi farmgames! You've successfully authenticated...`
 
 #### 4. Clone and run
 
-In **Git Bash**:
+These commands work in **Git Bash**, **PowerShell**, or **Command Prompt**:
 
 ```
-git clone git@github.com:Farm-Games/farmgames.git
+git clone -c core.sshCommand="ssh -i ~/.ssh/farmgames" git@github.com:Farm-Games/farmgames.git
 cd farmgames
 git config core.sshCommand "ssh -i ~/.ssh/farmgames"
 npm install
 npm run editor
 ```
+
+The first line uses the key for the clone itself. The second `git config` line saves it permanently for this repo, so all future git operations (including Deploy from the editor) use the correct key.
 
 ## Using the Editor
 

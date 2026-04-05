@@ -437,6 +437,117 @@ body {
 .toast.toast-success { border-left: 4px solid var(--emerald-green); }
 .toast.toast-error { border-left: 4px solid var(--danger); }
 
+/* ===== LINK ACROSS PAGES ===== */
+
+.link-across-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.link-across-controls input[type="text"] {
+  flex: 1;
+  min-width: 150px;
+}
+
+.link-across-results {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #1a3a5c;
+  border-radius: 4px;
+  background: #0a1929;
+  padding: 8px;
+}
+
+.link-across-page {
+  margin-bottom: 10px;
+}
+
+.link-across-page:last-child {
+  margin-bottom: 0;
+}
+
+.link-across-page-name {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--ice-blue);
+  margin-bottom: 4px;
+}
+
+.link-across-select-all {
+  margin-bottom: 8px;
+  font-size: 0.8em;
+  color: var(--gray-light);
+}
+
+.link-across-select-all label,
+.link-across-match label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.link-across-select-all input,
+.link-across-match input[type="checkbox"] {
+  accent-color: var(--deep-blue);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.link-across-match {
+  font-size: 0.8em;
+  color: var(--gray-light);
+  padding: 2px 0 2px 12px;
+  border-left: 2px solid #1a3a5c;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.link-across-match mark {
+  background: #e2a03f;
+  color: #000;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.link-across-count {
+  font-size: 0.8em;
+  color: var(--gray-dark);
+  padding: 8px 0;
+}
+
+.link-across-action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.link-across-target {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link-across-target label {
+  font-size: 0.85em;
+  color: var(--gray-light);
+  white-space: nowrap;
+}
+
+.link-across-target select {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85em;
+  padding: 6px 8px;
+  border: 1px solid #1a3a5c;
+  border-radius: 4px;
+  background: #0a1929;
+  color: var(--off-white);
+  flex: 1;
+}
+
 /* ===== IMAGE POPOVER ===== */
 
 .image-popover {
@@ -463,7 +574,14 @@ body {
   align-items: center;
 }
 
-.popover-row input[type="text"] {
+.popover-row label {
+  font-size: 0.7em;
+  color: var(--gray-light);
+  min-width: 34px;
+}
+
+.popover-row input[type="text"],
+.popover-row select {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.8em;
   padding: 4px 8px;

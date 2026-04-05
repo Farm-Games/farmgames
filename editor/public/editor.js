@@ -181,12 +181,27 @@
     });
   }
 
+  function getImageClassesFromMarkdown(src) {
+    const md = editor.getMarkdown();
+    const escapedSrc = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const htmlMatch = md.match(new RegExp(`<img[^>]*src="${escapedSrc}"[^>]*class="([^"]*)"[^>]*/?>`, 'i'));
+    return htmlMatch ? htmlMatch[1] : '';
+  }
+
   function showImagePopover(imgEl) {
     activePopoverImg = imgEl;
     const rect = imgEl.getBoundingClientRect();
     imagePopover.style.top = (rect.bottom + window.scrollY + 4) + 'px';
     imagePopover.style.left = (rect.left + window.scrollX) + 'px';
     popoverAltInput.value = imgEl.alt || '';
+
+    const src = imgEl.getAttribute('src') || '';
+    const classes = getImageClassesFromMarkdown(src) || imgEl.className || '';
+    const sizeMatch = classes.match(/img-(small|medium|large|full)/);
+    const alignMatch = classes.match(/img-(left|center|right)/);
+    $('#popoverSize').value = sizeMatch ? sizeMatch[0] : '';
+    $('#popoverAlign').value = alignMatch ? alignMatch[0] : '';
+
     imagePopover.classList.add('active');
   }
 
@@ -248,6 +263,39 @@
     editor.setMarkdown(updated);
     hideImagePopover();
     showToast('Alt text updated', 'success');
+  });
+
+  $('#popoverApplyLayout').addEventListener('click', () => {
+    if (!activePopoverImg) return;
+    const md = editor.getMarkdown();
+    const src = activePopoverImg.getAttribute('src');
+    const alt = activePopoverImg.alt || '';
+    const size = $('#popoverSize').value;
+    const align = $('#popoverAlign').value;
+    const classes = [size, align].filter(Boolean).join(' ');
+
+    const escapedSrc = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const mdImgRegex = new RegExp(`\\n?!\\[([^\\]]*)\\]\\(${escapedSrc}\\)\\n?`);
+    const htmlImgRegex = new RegExp(`\\n?<img[^>]*src="${escapedSrc}"[^>]*/?>\\n?`, 'i');
+
+    let updated = md;
+    if (classes) {
+      const htmlTag = `\n<img src="${src}" alt="${alt}" class="${classes}" />\n`;
+      if (htmlImgRegex.test(md)) {
+        updated = md.replace(htmlImgRegex, htmlTag);
+      } else {
+        updated = md.replace(mdImgRegex, htmlTag);
+      }
+    } else {
+      const plainImg = `\n![${alt}](${src})\n`;
+      if (htmlImgRegex.test(md)) {
+        updated = md.replace(htmlImgRegex, plainImg);
+      }
+    }
+
+    editor.setMarkdown(updated);
+    hideImagePopover();
+    showToast('Image layout updated', 'success');
   });
 
   // ===== LINK POPOVER =====
@@ -584,6 +632,134 @@
     if (e.key === 'Enter') $('#btnInsertUrl').click();
   });
 
+  // ===== LINK ACROSS PAGES =====
+
+  const linkAcrossModal = $('#linkAcrossModal');
+  const linkAcrossQuery = $('#linkAcrossQuery');
+  const linkAcrossCaseSensitive = $('#linkAcrossCaseSensitive');
+  const linkAcrossResults = $('#linkAcrossResults');
+  const linkAcrossAction = $('#linkAcrossAction');
+  const linkAcrossTarget = $('#linkAcrossTarget');
+  const linkAcrossReplaceText = $('#linkAcrossReplaceText');
+  const linkAcrossCustomText = $('#linkAcrossCustomText');
+  const linkAcrossFeedback = $('#linkAcrossFeedback');
+
+  function openLinkAcrossModal() {
+    linkAcrossQuery.value = '';
+    linkAcrossResults.innerHTML = '<p class="deploy-hint">Enter a search term and click Search to find matches across all pages.</p>';
+    linkAcrossAction.style.display = 'none';
+    linkAcrossFeedback.textContent = '';
+    linkAcrossFeedback.className = 'deploy-feedback';
+    openModalFn(linkAcrossModal);
+    setTimeout(() => linkAcrossQuery.focus(), 100);
+  }
+
+  async function searchAcrossPages() {
+    const query = linkAcrossQuery.value.trim();
+    if (!query) {
+      showToast('Enter a search term', 'error');
+      return;
+    }
+    const caseSensitive = linkAcrossCaseSensitive.checked;
+    try {
+      const results = await api('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, caseSensitive }),
+      });
+      if (results.length === 0) {
+        linkAcrossResults.innerHTML = '<p class="deploy-hint">No matches found.</p>';
+        linkAcrossAction.style.display = 'none';
+        return;
+      }
+      const flags = caseSensitive ? 'g' : 'gi';
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, flags);
+      let totalMatches = 0;
+      let html = '<div class="link-across-select-all"><label><input type="checkbox" id="linkAcrossSelectAll" checked /> Select all</label></div>';
+      for (const page of results) {
+        totalMatches += page.matches.length;
+        html += `<div class="link-across-page">
+          <div class="link-across-page-name">${slugToTitle(page.slug)} <span style="color:var(--gray-dark);font-weight:400">(${page.matches.length})</span></div>`;
+        for (const m of page.matches) {
+          const highlighted = m.text.replace(regex, '<mark>$1</mark>');
+          html += `<div class="link-across-match">
+            <label><input type="checkbox" class="link-across-cb" value="${m.id}" checked />
+            <span>L${m.line}: ${highlighted}</span></label>
+          </div>`;
+        }
+        html += '</div>';
+      }
+      html += `<div class="link-across-count">${totalMatches} match(es) across ${results.length} page(s)</div>`;
+      linkAcrossResults.innerHTML = html;
+
+      const selectAllCb = $('#linkAcrossSelectAll');
+      if (selectAllCb) {
+        selectAllCb.addEventListener('change', () => {
+          linkAcrossResults.querySelectorAll('.link-across-cb').forEach((cb) => {
+            cb.checked = selectAllCb.checked;
+          });
+        });
+      }
+
+      await loadPageList();
+      linkAcrossTarget.innerHTML = allPages
+        .filter((p) => !p.startsWith('file_'))
+        .map((p) => `<option value="${p}">${slugToTitle(p)}</option>`)
+        .join('');
+      linkAcrossAction.style.display = 'flex';
+      linkAcrossFeedback.textContent = '';
+    } catch (err) {
+      linkAcrossResults.innerHTML = '<p class="deploy-hint">Search failed: ' + err.message + '</p>';
+    }
+  }
+
+  function getSelectedLinkLines() {
+    return Array.from(linkAcrossResults.querySelectorAll('.link-across-cb:checked')).map((cb) => cb.value);
+  }
+
+  async function applyLinkAcross() {
+    const query = linkAcrossQuery.value.trim();
+    const caseSensitive = linkAcrossCaseSensitive.checked;
+    const targetSlug = linkAcrossTarget.value;
+    const useSearchText = linkAcrossReplaceText.checked;
+    const customText = linkAcrossCustomText.value.trim();
+    const replaceText = useSearchText ? query : (customText || query);
+    const selectedLines = getSelectedLinkLines();
+
+    if (!query || !targetSlug) return;
+    if (selectedLines.length === 0) {
+      linkAcrossFeedback.textContent = 'No occurrences selected.';
+      linkAcrossFeedback.className = 'deploy-feedback error';
+      return;
+    }
+
+    if (!confirm(`This will link ${selectedLines.length} occurrence(s) of "${query}" to "${slugToTitle(targetSlug)}". Continue?`)) return;
+
+    try {
+      const result = await api('/api/pages/link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, caseSensitive, targetSlug, replaceText, selectedLines }),
+      });
+      linkAcrossFeedback.textContent = `Linked ${result.totalReplaced} occurrence(s) across ${result.pagesModified} page(s).`;
+      linkAcrossFeedback.className = 'deploy-feedback success';
+      searchAcrossPages();
+    } catch (err) {
+      linkAcrossFeedback.textContent = 'Failed: ' + err.message;
+      linkAcrossFeedback.className = 'deploy-feedback error';
+    }
+  }
+
+  $('#btnLinkAcrossSearch').addEventListener('click', searchAcrossPages);
+  linkAcrossQuery.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') searchAcrossPages();
+  });
+  $('#btnLinkAcrossApply').addEventListener('click', applyLinkAcross);
+
+  linkAcrossReplaceText.addEventListener('change', () => {
+    linkAcrossCustomText.style.display = linkAcrossReplaceText.checked ? 'none' : 'block';
+  });
+
   // ===== DEPLOY =====
 
   async function deploy() {
@@ -644,7 +820,7 @@
 
   btnSave.addEventListener('click', savePage);
   btnDelete.addEventListener('click', deletePage);
-
+  $('#btnLinkAcross').addEventListener('click', openLinkAcrossModal);
 
   btnDeployOpen.addEventListener('click', async () => {
     deployMessage.value = '';
@@ -687,6 +863,26 @@
     </div>`;
   }
 
+  // Update
+  $('#btnUpdate').addEventListener('click', async () => {
+    if (!confirm('This will pull the latest changes and restart the editor. Continue?')) return;
+    const btn = $('#btnUpdate');
+    btn.disabled = true;
+    btn.textContent = 'Updating...';
+    try {
+      await api('/api/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      showToast('Update complete -- editor is restarting...', 'success');
+      setTimeout(() => { window.location.reload(); }, 3000);
+    } catch (err) {
+      showToast('Update failed: ' + err.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '\u{1F504} Update';
+    }
+  });
+
   // Hamburger
   hamburgerBtn.addEventListener('click', () => {
     toolbarActions.classList.toggle('open');
@@ -714,6 +910,14 @@
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
       savePage();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      e.preventDefault();
+      btnDeployOpen.click();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+      e.preventDefault();
+      openLinkAcrossModal();
     }
   });
 

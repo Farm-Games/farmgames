@@ -93,3 +93,42 @@ describe('Markdown rendering for WYSIWYG toolbar features', () => {
   });
 
 });
+
+describe('Image layout HTML passthrough', () => {
+
+  it('img with size class preserves class attribute', () => {
+    const html = render('<img src="/images/t.jpg" alt="test" class="img-small" />');
+    assert.match(html, /class="img-small"/);
+    assert.match(html, /src="\/images\/t\.jpg"/);
+  });
+
+  it('img with size and alignment classes preserves both', () => {
+    const html = render('<img src="/images/t.jpg" alt="test" class="img-medium img-left" />');
+    assert.match(html, /class="img-medium img-left"/);
+  });
+
+  it('img-right class preserves for float layout', () => {
+    const html = render('<img src="/images/t.jpg" alt="test" class="img-large img-right" />');
+    assert.match(html, /class="img-large img-right"/);
+  });
+
+  it('img-center class preserves for centered layout', () => {
+    const html = render('<img src="/images/t.jpg" alt="test" class="img-center" />');
+    assert.match(html, /class="img-center"/);
+  });
+
+  it('floated image followed by text renders as separate elements', () => {
+    const md = 'Text before.\n\n<img src="/images/t.jpg" alt="test" class="img-small img-left" />\n\nText that wraps around.';
+    const html = render(md);
+    assert.match(html, /class="img-small img-left"/);
+    assert.match(html, /Text that wraps around/);
+  });
+
+  it('img without layout classes reverts to plain markdown rendering', () => {
+    const html = render('![plain](/images/t.jpg)');
+    assert.match(html, /<img/);
+    assert.match(html, /alt="plain"/);
+    assert.doesNotMatch(html, /class="/);
+  });
+
+});

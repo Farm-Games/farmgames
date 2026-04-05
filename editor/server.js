@@ -5,6 +5,7 @@ const multer = require('multer');
 const showdown = require('showdown');
 const { execSync } = require('child_process');
 const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage } = require('../shared/template');
+const { replaceLinkInLine } = require('../shared/link-replace');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PAGES_DIR = path.join(ROOT_DIR, 'src', 'pages');
@@ -90,6 +91,87 @@ app.delete('/api/pages/:name', (req, res) => {
   try {
     fs.unlinkSync(filePath);
     res.json({ deleted: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ======= SEARCH API =======
+
+app.post('/api/search', (req, res) => {
+  const { query, caseSensitive } = req.body;
+  if (!query) return res.json([]);
+  try {
+    const files = fs.readdirSync(PAGES_DIR).filter((f) => f.endsWith('.md'));
+    const flags = caseSensitive ? 'g' : 'gi';
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+    const results = [];
+    for (const file of files) {
+      const slug = file.replace('.md', '');
+      const content = fs.readFileSync(path.join(PAGES_DIR, file), 'utf8');
+      const lines = content.split('\n');
+      const matches = [];
+      for (let i = 0; i < lines.length; i++) {
+        if (regex.test(lines[i])) {
+          matches.push({ id: `${slug}:${i + 1}`, line: i + 1, text: lines[i].trim().substring(0, 120) });
+        }
+        regex.lastIndex = 0;
+      }
+      if (matches.length > 0) {
+        results.push({ slug, matches });
+      }
+    }
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ======= LINK ACROSS PAGES API =======
+
+app.post('/api/pages/link', (req, res) => {
+  const { query, caseSensitive, targetSlug, replaceText, selectedLines } = req.body;
+  if (!query || !targetSlug) return res.status(400).json({ error: 'Missing query or target' });
+  try {
+    const files = fs.readdirSync(PAGES_DIR).filter((f) => f.endsWith('.md'));
+    const flags = caseSensitive ? '' : 'i';
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const existingLinkRegex = new RegExp(`\\[${escaped}\\]\\([^)]*\\)`, flags + 'g');
+    const plainRegex = new RegExp(escaped, flags + 'g');
+    let totalReplaced = 0;
+    let pagesModified = 0;
+
+    const selectedSet = selectedLines ? new Set(selectedLines) : null;
+
+    for (const file of files) {
+      const slug = file.replace('.md', '');
+      const filePath = path.join(PAGES_DIR, file);
+      const content = fs.readFileSync(filePath, 'utf8');
+      const lines = content.split('\n');
+      let fileModified = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const lineId = `${slug}:${i + 1}`;
+        if (selectedSet && !selectedSet.has(lineId)) continue;
+        if (!existingLinkRegex.test(lines[i]) && !plainRegex.test(lines[i])) continue;
+        existingLinkRegex.lastIndex = 0;
+        plainRegex.lastIndex = 0;
+
+        const updated = replaceLinkInLine(lines[i], query, targetSlug, replaceText, caseSensitive);
+
+        if (updated !== lines[i]) {
+          lines[i] = updated;
+          totalReplaced++;
+          fileModified = true;
+        }
+      }
+
+      if (fileModified) {
+        fs.writeFileSync(filePath, lines.join('\n'));
+        pagesModified++;
+      }
+    }
+    res.json({ totalReplaced, pagesModified });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -228,6 +310,25 @@ app.post('/api/deploy', (req, res) => {
   } catch (err) {
     steps.push('Error: ' + err.message);
     res.status(500).json({ deployed: false, steps, error: err.message });
+  }
+});
+
+// ======= UPDATE API =======
+
+app.post('/api/update', (req, res) => {
+  try {
+    const status = runGit('status --porcelain');
+    if (status.trim()) {
+      return res.status(400).json({ error: 'You have unsaved changes. Please deploy or discard them before updating.' });
+    }
+    const output = runGit('pull origin master');
+    res.json({ updated: true, output });
+    setTimeout(() => {
+      console.log('\n  Restarting editor after update...\n');
+      process.exit(0);
+    }, 500);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

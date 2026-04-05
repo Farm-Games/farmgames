@@ -100,6 +100,44 @@ article img {
   margin-top: 15px;
 }
 
+article img.img-small { max-width: 25%; }
+article img.img-medium { max-width: 50%; }
+article img.img-large { max-width: 75%; }
+article img.img-full { max-width: 100%; }
+
+article img.img-left {
+  float: left;
+  margin: 0 20px 12px 0;
+}
+
+article img.img-right {
+  float: right;
+  margin: 0 0 12px 20px;
+}
+
+article img.img-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+article p:has(> img.img-left),
+article p:has(> img.img-right) {
+  overflow: hidden;
+  margin-bottom: 0 !important;
+}
+
+article p:has(> img.img-center) {
+  text-align: center;
+  margin-bottom: 0 !important;
+}
+
+article .clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
 /* ----- Blockquote Styling ----- */
 blockquote {
   background-color: var(--quote-background);

@@ -24,10 +24,12 @@
         <button id="btnOpen" title="Open Page">&#128194; Open</button>
         <button id="btnSave" title="Save Page" disabled>&#128190; Save</button>
         <button id="btnDelete" title="Delete Page" disabled>&#128465; Delete</button>
+        <button id="btnLinkAcross" title="Find &amp; Link across pages (Ctrl+L)">&#128279; Link All</button>
       </div>
       <div class="toolbar-divider"></div>
       <div class="toolbar-group">
         <button id="btnDeployOpen" title="Deploy changes to the live website">&#128640; Deploy</button>
+        <button id="btnUpdate" title="Pull latest changes and restart">&#128260; Update</button>
       </div>
     </nav>
   </header>
@@ -124,6 +126,42 @@
     </div>
   </div>
 
+  <!-- ===== LINK ACROSS PAGES MODAL ===== -->
+  <div class="modal-overlay" id="linkAcrossModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Find &amp; Link Across Pages</h2>
+        <button class="modal-close" data-close="linkAcrossModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="link-across-controls">
+          <input type="text" id="linkAcrossQuery" placeholder="Search text to find..." autocomplete="off" />
+          <label class="filter-toggle">
+            <input type="checkbox" id="linkAcrossCaseSensitive" />
+            Case sensitive
+          </label>
+          <button id="btnLinkAcrossSearch" class="btn-sm">Search</button>
+        </div>
+        <div class="link-across-results" id="linkAcrossResults">
+          <p class="deploy-hint">Enter a search term and click Search to find matches across all pages.</p>
+        </div>
+        <div class="link-across-action" id="linkAcrossAction" style="display:none">
+          <div class="link-across-target">
+            <label>Link to page:</label>
+            <select id="linkAcrossTarget"></select>
+          </div>
+          <label class="filter-toggle">
+            <input type="checkbox" id="linkAcrossReplaceText" checked />
+            Use search text as link text
+          </label>
+          <input type="text" id="linkAcrossCustomText" placeholder="Custom link text (optional)" autocomplete="off" style="display:none" />
+          <button id="btnLinkAcrossApply" class="btn-primary">Apply Links</button>
+          <div class="deploy-feedback" id="linkAcrossFeedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== IMAGE POPOVER ===== -->
   <div class="image-popover" id="imagePopover">
     <div class="popover-row">
@@ -133,6 +171,28 @@
     <div class="popover-row">
       <input type="text" id="popoverAltInput" placeholder="Alt text..." />
       <button id="popoverSaveAlt" class="btn-sm">Save</button>
+    </div>
+    <div class="popover-row">
+      <label>Size</label>
+      <select id="popoverSize">
+        <option value="">Default</option>
+        <option value="img-small">Small</option>
+        <option value="img-medium">Medium</option>
+        <option value="img-large">Large</option>
+        <option value="img-full">Full</option>
+      </select>
+    </div>
+    <div class="popover-row">
+      <label>Align</label>
+      <select id="popoverAlign">
+        <option value="">Default</option>
+        <option value="img-left">Left (text wraps)</option>
+        <option value="img-center">Center</option>
+        <option value="img-right">Right (text wraps)</option>
+      </select>
+    </div>
+    <div class="popover-row popover-actions">
+      <button id="popoverApplyLayout" class="btn-sm">Apply Layout</button>
     </div>
   </div>
 
