@@ -4,9 +4,10 @@ Epping entered the league as a hardworking grinder who could score goals close t
 
 He was eventually traded to the Tulsa Tomahawks, where he suffered from several injuries and could no longer play the physical game he had become coveted for, leading to a trade to Kamloops. While in Kamloops, Konpecki suffered another injury that he never quite recovered from, hampering his skills even further, ultimately leading to his abandonment by the Bohemians and eventual retirement.
 
-![Epping Konpecki taking a picture of his head in his backyard.](file_epping_konpecki_jpg)
+![Epping Konpecki taking a picture of his head in his backyard.](/images/epping_konpecki.jpg)
+
 > Epping Konpecki taking a picture of his head in his backyard.
 
 Epping has become an intense anti-vaxxer since the end of his career, a choice that ultimately led to the death of his only son, Buncley Konpecki. Epping was then divorced by his wife and retired to California, where he lives to this day.
 
-<br />
+<br>
