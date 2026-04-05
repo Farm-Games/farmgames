@@ -1,5 +1,5 @@
+![Durney Konpecki in 2015 at the marina, preparing for a night out on the yacht.](/images/durney_konpecki.jpg)
 
-![Durney Konpecki in 2015 at the marina, preparing for a night out on the yacht.](file_durney_konpecki_jpg)
 > Durney Konpecki in 2015 at the marina, preparing for a night out on the yacht.
 
 **Durney Konpecki** is a Polish-Canadian professional ice hockey winger in the Farm Games ice hockey league. Drafted in 1979 by the [Cleveland Red Roosters](cleveland_red_roosters), Durney is one of few Farm Games players to have won with every team he played with, winning three cups with the Red Roosters between 1983-85, one with the [Albany Rattlers](albany_rattlers) in 1989, and one with the [Milwaukee Pistons](milwaukee_pistons) in 1999. As such, Durney is considered one of the greatest Farm Games players of all time, racking up 701 points in his 21 year long career. Durney is the 2nd cousin of [Bronin Konpecki](#a), the older brother of [Epping Konpecki](epping_konpecki), father to [Dmitri Konpecki](#a) and grandfather of [Lemony Konpecki](#a). [Cank Dzvtednuska](#a) is his 1st cousin once removed on his mother's side.
