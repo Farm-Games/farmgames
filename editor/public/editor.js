@@ -56,6 +56,7 @@
   // ===== HELPERS =====
 
   function slugToTitle(slug) {
+    if (slug === 'index') return 'Homepage';
     return slug
       .split('_')
       .map((w) => {
@@ -374,6 +375,11 @@
         p.toLowerCase().includes(search) || slugToTitle(p).toLowerCase().includes(search)
       );
     }
+    filtered.sort((a, b) => {
+      if (a === 'index') return -1;
+      if (b === 'index') return 1;
+      return a.localeCompare(b);
+    });
     if (filtered.length === 0) {
       listEl.innerHTML = '<li class="page-list-empty">No pages found</li>';
       return;

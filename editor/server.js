@@ -205,6 +205,22 @@ app.post('/api/deploy', (req, res) => {
     runGit(`commit -m "${message}"`);
     steps.push('Committed: ' + message);
 
+    try {
+      runGit('pull --rebase origin master');
+      steps.push('Synced with remote');
+    } catch (pullErr) {
+      const msg = pullErr.message || '';
+      if (msg.includes('CONFLICT') || msg.includes('could not apply')) {
+        runGit('rebase --abort');
+        return res.status(500).json({
+          deployed: false,
+          steps,
+          error: 'Your changes conflict with changes on the website. Please ask for help resolving this.',
+        });
+      }
+      throw pullErr;
+    }
+
     runGit('push origin master');
     steps.push('Pushed to origin/master');
 
