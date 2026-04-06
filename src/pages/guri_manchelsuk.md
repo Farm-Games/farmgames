@@ -1,5 +1,5 @@
+![Guri Manchelsuk pictured on his grape field in 2019.](/images/guri_manchelsuk.jpg)
 
-![Guri Manchelsuk pictured on his grape field in 2019.](file_guri_manchelsuk_jpg)
 > Guri Manchelsuk pictured on his grape field in 2019.
 
 **Guri Manchelsuk** was a professional ice hockey centreman that played in the lord's glorious Farm Games from 1995 until 2010. He played for the [Halifax Walrus](halifax_walrus), [Newmarket Roadrunners](newmarket_roadrunners) and [San Francisco Mavericks](#a). He is fondly remembered for his time serving as captain of the Roadrunners during the early 2000's, and is often cited as one of the greatest Roadrunners of all time, alongside hometown legends such as [Brown Simpson](brown_simpson), [Durg Kennelby](#a), [Jake Gant](jake_gant), [Daniel Rissous](#a) and [Davey Antednusky](#a).
