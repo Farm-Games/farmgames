@@ -65,10 +65,39 @@ const convertMarkdownToHTML = () => {
   });
 };
 
+const generateSitemap = (files) => {
+  const pages = files
+    .map((f) => f.replace('.md', ''))
+    .filter((f) => !f.startsWith('file_') && f !== 'index' && f !== 'sitemap');
+
+  const grouped = {};
+  for (const page of pages.sort()) {
+    const letter = page[0].toUpperCase();
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push(page);
+  }
+
+  let md = '# All Pages\n\n';
+  for (const letter of Object.keys(grouped).sort()) {
+    md += `## ${letter}\n\n`;
+    for (const page of grouped[letter]) {
+      md += `- [${fileNameToTitle(page)}](${page})\n`;
+    }
+    md += '\n';
+  }
+
+  const html = wrapTables(converter.makeHtml(md));
+  const outputPath = OUTPUT_FOLDER + 'sitemap.html';
+  fs.writeFileSync(outputPath, pageBodyTemplate('sitemap.md', files, html, true));
+  console.log(`Generated sitemap at ${outputPath}`);
+};
+
 // Main
 clearOutputFolder(OUTPUT_FOLDER);
 copyCSSFilesToOutputFolder(OUTPUT_FOLDER);
 copyIntroFilesToOutputFolder(OUTPUT_FOLDER);
 copyImageFilesToOutputFolder(OUTPUT_FOLDER);
 convertMarkdownToHTML();
+const allFiles = fs.readdirSync(INPUT_FOLDER).filter((file) => file.endsWith('.md'));
+generateSitemap(allFiles);
 fs.writeFileSync(OUTPUT_FOLDER + 'CNAME', 'farmgames.uk');

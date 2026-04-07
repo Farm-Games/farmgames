@@ -990,23 +990,61 @@
   });
 
   // Preview site
+  let previewRunning = false;
+  let previewWindow = null;
+
+  function updatePreviewButton() {
+    const btn = $('#btnPreview');
+    if (previewRunning) {
+      btn.textContent = '\u{23F9} Stop Preview';
+      btn.title = 'Stop the preview server';
+    } else {
+      btn.textContent = '\u{1F441} Preview';
+      btn.title = 'Open site preview';
+    }
+  }
+
+  api('/api/preview-server/status').then((s) => {
+    previewRunning = s.running;
+    updatePreviewButton();
+  }).catch(() => {});
+
   $('#btnPreview').addEventListener('click', async () => {
     const btn = $('#btnPreview');
     btn.disabled = true;
-    btn.textContent = 'Starting...';
-    try {
-      const result = await api('/api/preview-server/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const host = window.location.hostname;
-      window.open(`http://${host}:${result.port}`, '_blank');
-      showToast('Preview server running on port ' + result.port, 'success');
-    } catch (err) {
-      showToast('Preview failed: ' + err.message, 'error');
+    if (previewRunning) {
+      btn.textContent = 'Stopping...';
+      try {
+        await api('/api/preview-server/stop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        previewRunning = false;
+        if (previewWindow && !previewWindow.closed) {
+          previewWindow.close();
+        }
+        previewWindow = null;
+        showToast('Preview server stopped', 'success');
+      } catch (err) {
+        showToast('Stop failed: ' + err.message, 'error');
+      }
+    } else {
+      btn.textContent = 'Starting...';
+      try {
+        const result = await api('/api/preview-server/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        previewRunning = true;
+        const host = window.location.hostname;
+        previewWindow = window.open(`http://${host}:${result.port}`, 'farmgames-preview');
+        showToast('Preview server running on port ' + result.port, 'success');
+      } catch (err) {
+        showToast('Preview failed: ' + err.message, 'error');
+      }
     }
     btn.disabled = false;
-    btn.textContent = '\u{1F441} Preview';
+    updatePreviewButton();
   });
 
   // Hamburger
@@ -1055,6 +1093,11 @@
     if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
       e.preventDefault();
       openLinkAcrossModal();
+    }
+    if (e.key === 'Escape') {
+      $$('.modal-overlay.active').forEach((m) => closeModalFn(m));
+      hideImagePopover();
+      hideLinkPopover();
     }
   });
 

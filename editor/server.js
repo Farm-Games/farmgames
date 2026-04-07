@@ -405,6 +405,11 @@ app.get('/api/preview-server/status', (req, res) => {
   res.json({ running: !!previewProcess, port: PREVIEW_PORT });
 });
 
+app.post('/api/preview-server/stop', (req, res) => {
+  killPreviewServer();
+  res.json({ running: false });
+});
+
 function killPreviewServer() {
   if (previewProcess) {
     previewProcess.kill();
