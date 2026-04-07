@@ -276,7 +276,7 @@ app.post('/api/images', upload.array('images', 20), (req, res) => {
 // ======= DEPLOY API =======
 
 function runGit(args) {
-  return execSync(`git ${args}`, { cwd: ROOT_DIR, encoding: 'utf8', timeout: 30000 });
+  return execSync(`git ${args}`, { cwd: ROOT_DIR, encoding: 'utf8', timeout: 30000, stdio: ['pipe', 'pipe', 'pipe'] });
 }
 
 app.get('/api/deploy/summary', (req, res) => {
