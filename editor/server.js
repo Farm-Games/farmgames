@@ -77,6 +77,7 @@ app.get('/api/pages/:name', (req, res) => {
     return res.status(404).json({ error: 'Page not found' });
   }
   const content = fs.readFileSync(filePath, 'utf8');
+  console.log(`  · Opened: ${req.params.name}`);
   res.json({ name: req.params.name, content });
 });
 
@@ -85,8 +86,10 @@ app.put('/api/pages/:name', (req, res) => {
   const filePath = path.join(PAGES_DIR, name + '.md');
   try {
     fs.writeFileSync(filePath, req.body.content || '');
+    console.log(`  ✓ Saved: ${name}`);
     res.json({ name, saved: true });
   } catch (err) {
+    console.log(`  ✗ Save failed: ${name} - ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });
@@ -98,8 +101,10 @@ app.delete('/api/pages/:name', (req, res) => {
   }
   try {
     fs.unlinkSync(filePath);
+    console.log(`  ✓ Deleted: ${req.params.name}`);
     res.json({ deleted: true });
   } catch (err) {
+    console.log(`  ✗ Delete failed: ${req.params.name} - ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });
@@ -179,8 +184,10 @@ app.post('/api/pages/link', (req, res) => {
         pagesModified++;
       }
     }
+    console.log(`  ✓ Linked "${query}" → ${targetSlug} (${totalReplaced} in ${pagesModified} page(s))`);
     res.json({ totalReplaced, pagesModified });
   } catch (err) {
+    console.log(`  ✗ Link across failed: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });
@@ -196,8 +203,10 @@ app.put('/api/config', (req, res) => {
     const config = loadSiteConfig();
     Object.assign(config, req.body);
     saveSiteConfig(config);
+    console.log('  ✓ Settings saved');
     res.json(config);
   } catch (err) {
+    console.log('  ✗ Settings save failed:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -218,8 +227,10 @@ app.post('/api/config/favicon', faviconUpload.single('favicon'), (req, res) => {
     const config = loadSiteConfig();
     config.favicon = req.file.filename;
     saveSiteConfig(config);
+    console.log(`  ✓ Favicon uploaded: ${req.file.filename}`);
     res.json({ favicon: req.file.filename });
   } catch (err) {
+    console.log('  ✗ Favicon upload failed:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -270,6 +281,9 @@ app.post('/api/images', upload.array('images', 20), (req, res) => {
     name: f.filename,
     url: '/images/' + f.filename,
   }));
+  if (uploaded.length) {
+    console.log(`  ✓ Uploaded ${uploaded.length} image(s): ${uploaded.map((u) => u.name).join(', ')}`);
+  }
   res.json(uploaded);
 });
 
@@ -314,6 +328,7 @@ app.post('/api/deploy/revert', (req, res) => {
   const { files } = req.body;
   if (!files || !files.length) return res.status(400).json({ error: 'No files specified' });
   try {
+    console.log(`  → Reverting ${files.length} file(s)...`);
     const reverted = [];
     for (const file of files) {
       const safe = file.replace(/"/g, '');
@@ -328,8 +343,10 @@ app.post('/api/deploy/revert', (req, res) => {
         }
       }
     }
+    console.log(`  ✓ Reverted ${reverted.length} file(s)\n`);
     res.json({ reverted });
   } catch (err) {
+    console.log('  ✗ Revert failed:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -359,9 +376,11 @@ app.post('/api/deploy', (req, res) => {
   try {
     const removed = cleanUnusedImages();
     if (removed > 0) {
+      console.log(`  ✓ Cleaned ${removed} unused image(s)`);
       steps.push('Removed ' + removed + ' unused image(s)');
     }
 
+    console.log('  → Staging changes...');
     if (selectedFiles && selectedFiles.length > 0) {
       const safeFiles = selectedFiles.map((f) => `"${f.replace(/"/g, '')}"`).join(' ');
       runGit(`add ${safeFiles}`);
@@ -370,22 +389,29 @@ app.post('/api/deploy', (req, res) => {
       runGit('add -A');
       steps.push('Staged all changes');
     }
+    console.log('  ✓ Staged');
 
     const status = runGit('status --porcelain');
     if (!status.trim()) {
+      console.log('  · Nothing to deploy');
       return res.json({ deployed: false, steps, message: 'Nothing to deploy -- no changes found.' });
     }
 
+    console.log('  → Committing...');
     runGit(`commit -m "${message}"`);
     steps.push('Committed: ' + message);
+    console.log('  ✓ Committed');
 
+    console.log('  → Syncing with remote...');
     try {
       runGit('pull --rebase origin master');
       steps.push('Synced with remote');
+      console.log('  ✓ Synced');
     } catch (pullErr) {
       const msg = pullErr.message || '';
       if (msg.includes('CONFLICT') || msg.includes('could not apply')) {
         runGit('rebase --abort');
+        console.log('  ✗ Conflict detected, reverted');
         return res.status(500).json({
           deployed: false,
           steps,
@@ -395,11 +421,14 @@ app.post('/api/deploy', (req, res) => {
       throw pullErr;
     }
 
+    console.log('  → Pushing...');
     runGit('push origin master');
     steps.push('Pushed to origin/master');
+    console.log('  ✓ Deployed successfully\n');
 
     res.json({ deployed: true, steps });
   } catch (err) {
+    console.log('  ✗ Deploy failed:', err.message);
     steps.push('Error: ' + err.message);
     res.status(500).json({ deployed: false, steps, error: err.message });
   }
@@ -411,15 +440,19 @@ app.post('/api/update', (req, res) => {
   try {
     const status = runGit('status --porcelain');
     if (status.trim()) {
+      console.log('  ✗ Update blocked: uncommitted changes');
       return res.status(400).json({ error: 'You have unsaved changes. Please deploy or discard them before updating.' });
     }
+    console.log('  → Pulling latest changes...');
     const output = runGit('pull origin master');
+    console.log('  ✓ Updated');
     res.json({ updated: true, output });
     setTimeout(() => {
-      console.log('\n  Restarting editor after update...\n');
+      console.log('  → Restarting editor...\n');
       process.exit(0);
     }, 500);
   } catch (err) {
+    console.log('  ✗ Update failed:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -432,8 +465,10 @@ const PREVIEW_PORT = 4000;
 
 app.post('/api/preview-server/start', (req, res) => {
   if (previewProcess) {
+    console.log('  · Preview server already running');
     return res.json({ running: true, port: PREVIEW_PORT });
   }
+  console.log('  → Starting preview server...');
   previewProcess = spawn('node', [path.join(ROOT_DIR, 'preview-site.js')], {
     cwd: ROOT_DIR,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -446,6 +481,7 @@ app.post('/api/preview-server/start', (req, res) => {
   const onReady = (data) => {
     if (!responded && data.toString().includes('Site preview running')) {
       responded = true;
+      console.log(`  ✓ Preview server running on port ${PREVIEW_PORT}`);
       res.json({ running: true, port: PREVIEW_PORT });
     }
   };
@@ -466,6 +502,7 @@ app.get('/api/preview-server/status', (req, res) => {
 
 app.post('/api/preview-server/stop', (req, res) => {
   killPreviewServer();
+  console.log('  ✓ Preview server stopped');
   res.json({ running: false });
 });
 
