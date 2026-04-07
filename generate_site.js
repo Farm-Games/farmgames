@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const showdown = require('showdown');
 const { INPUT_FOLDER, OUTPUT_FOLDER, WEB_ROOT } = require('./constants-html');
 const { clearOutputFolder, copyCSSFilesToOutputFolder, copyIntroFilesToOutputFolder, copyImageFilesToOutputFolder } = require('./utilities');
@@ -6,6 +7,9 @@ const { mountIntroScreen } = require('./src/intro');
 const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage, wrapTables } = require('./shared/template');
 
 const converter = new showdown.Converter(SHOWDOWN_OPTIONS);
+
+const CONFIG_PATH = path.join(__dirname, 'site.config.json');
+const siteConfig = fs.existsSync(CONFIG_PATH) ? JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')) : {};
 
 const filesToSelectOptions = (files) =>
   files
@@ -51,6 +55,7 @@ const pageBodyTemplate = (fileName, files, content, addNav = true) => {
     extraHead,
     extraBodyStart: !addNav ? mountIntroScreen() : '',
     showNav: addNav,
+    siteConfig,
   });
 };
 
@@ -97,6 +102,13 @@ clearOutputFolder(OUTPUT_FOLDER);
 copyCSSFilesToOutputFolder(OUTPUT_FOLDER);
 copyIntroFilesToOutputFolder(OUTPUT_FOLDER);
 copyImageFilesToOutputFolder(OUTPUT_FOLDER);
+if (siteConfig.favicon) {
+  const faviconSrc = path.join(__dirname, 'src', siteConfig.favicon);
+  if (fs.existsSync(faviconSrc)) {
+    fs.copyFileSync(faviconSrc, path.join(OUTPUT_FOLDER, siteConfig.favicon));
+    console.log(`Copied favicon: ${siteConfig.favicon}`);
+  }
+}
 convertMarkdownToHTML();
 const allFiles = fs.readdirSync(INPUT_FOLDER).filter((file) => file.endsWith('.md'));
 generateSitemap(allFiles);

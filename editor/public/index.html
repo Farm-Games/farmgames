@@ -34,6 +34,7 @@
         <button id="btnDeployOpen" title="Deploy changes to the live website">&#128640; Deploy</button>
         <button id="btnUpdate" title="Pull latest changes and restart">&#128260; Update</button>
         <button id="btnPreview" title="Open site preview">&#128065; Preview</button>
+        <button id="btnSettings" title="Site settings">&#9881; Settings</button>
       </div>
     </nav>
   </header>
@@ -174,6 +175,39 @@
           <button id="btnLinkAcrossApply" class="btn-primary">Apply Links</button>
           <div class="deploy-feedback" id="linkAcrossFeedback"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS MODAL ===== -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Site Settings</h2>
+        <button class="modal-close" data-close="settingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <label for="settingSiteTitle">Site Title</label>
+          <input type="text" id="settingSiteTitle" placeholder="e.g. Farm Games Wiki" />
+          <p class="input-hint">Shown in the nav bar and browser tab</p>
+        </div>
+        <div class="settings-group">
+          <label for="settingPageTitle">Page Title Template</label>
+          <input type="text" id="settingPageTitle" placeholder="e.g. {{pageTitle}} | {{siteTitle}}" />
+          <p class="input-hint">Use {{pageTitle}} and {{siteTitle}} as placeholders</p>
+        </div>
+        <div class="settings-group">
+          <label>Favicon</label>
+          <div class="favicon-row">
+            <img id="faviconPreview" class="favicon-preview" />
+            <button id="btnUploadFavicon" class="btn-sm">Upload Favicon</button>
+            <input type="file" id="faviconFileInput" accept=".ico,.png,.svg" style="display:none" />
+          </div>
+          <p class="input-hint">Accepts .ico, .png, or .svg</p>
+        </div>
+        <button id="btnSaveSettings" class="btn-primary">Save Settings</button>
+        <div class="deploy-feedback" id="settingsFeedback"></div>
       </div>
     </div>
   </div>

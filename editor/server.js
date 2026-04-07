@@ -11,9 +11,18 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const PAGES_DIR = path.join(ROOT_DIR, 'src', 'pages');
 const IMAGES_DIR = path.join(ROOT_DIR, 'src', 'images');
 const CSS_DIR = path.join(ROOT_DIR, 'src');
+const CONFIG_PATH = path.join(ROOT_DIR, 'site.config.json');
 const PORT = 3456;
 
 const converter = new showdown.Converter(SHOWDOWN_OPTIONS);
+
+function loadSiteConfig() {
+  try { return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')); } catch { return {}; }
+}
+
+function saveSiteConfig(config) {
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n');
+}
 
 const previewExtraStyle = `
         <style>
@@ -176,6 +185,55 @@ app.post('/api/pages/link', (req, res) => {
   }
 });
 
+// ======= SITE CONFIG API =======
+
+app.get('/api/config', (req, res) => {
+  res.json(loadSiteConfig());
+});
+
+app.put('/api/config', (req, res) => {
+  try {
+    const config = loadSiteConfig();
+    Object.assign(config, req.body);
+    saveSiteConfig(config);
+    res.json(config);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const faviconUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, CSS_DIR),
+    filename: (req, file, cb) => cb(null, 'favicon.ico'),
+  }),
+  fileFilter: (req, file, cb) => {
+    cb(null, /\.(ico|png|svg)$/i.test(file.originalname));
+  },
+});
+
+app.post('/api/config/favicon', faviconUpload.single('favicon'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No valid favicon file (ico, png, svg)' });
+  try {
+    const config = loadSiteConfig();
+    config.favicon = req.file.filename;
+    saveSiteConfig(config);
+    res.json({ favicon: req.file.filename });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Static: favicon for preview
+app.use('/favicon.ico', (req, res) => {
+  const config = loadSiteConfig();
+  if (config.favicon) {
+    const faviconPath = path.join(CSS_DIR, config.favicon);
+    if (fs.existsSync(faviconPath)) return res.sendFile(faviconPath);
+  }
+  res.status(404).end();
+});
+
 // ======= PREVIEW API =======
 
 app.post('/api/preview', (req, res) => {
@@ -189,6 +247,7 @@ app.post('/api/preview', (req, res) => {
     fileName: pageName || 'Untitled',
     content: html,
     extraHead: baseTag + previewExtraStyle,
+    siteConfig: loadSiteConfig(),
   }));
 });
 
