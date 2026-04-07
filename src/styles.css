@@ -201,12 +201,14 @@ body > .nav {
 /* ----- Table Styling ----- */
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin: 20px 0;
 }
 
 table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 100%;
   font-size: 0.95em;
 }
 

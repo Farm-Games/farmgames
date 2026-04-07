@@ -46,6 +46,10 @@ const renderPage = ({ cssRoot, navRoot, fileName, content, extraHead, extraBodyS
 </html>
 `;
 
+const wrapTables = (html) =>
+  html.replace(/<table>/g, '<div class="table-wrapper"><table>').replace(/<\/table>/g, '</table></div>');
+
 exports.SHOWDOWN_OPTIONS = SHOWDOWN_OPTIONS;
 exports.fileNameToTitle = fileNameToTitle;
 exports.renderPage = renderPage;
+exports.wrapTables = wrapTables;

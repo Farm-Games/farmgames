@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,11 @@
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="editor.css" />
 </head>
+
 <body>
   <!-- ===== TOOLBAR ===== -->
   <header class="toolbar">
@@ -30,6 +33,7 @@
       <div class="toolbar-group">
         <button id="btnDeployOpen" title="Deploy changes to the live website">&#128640; Deploy</button>
         <button id="btnUpdate" title="Pull latest changes and restart">&#128260; Update</button>
+        <button id="btnPreview" title="Open site preview">&#128065; Preview</button>
       </div>
     </nav>
   </header>
@@ -165,7 +169,8 @@
             <input type="checkbox" id="linkAcrossReplaceText" checked />
             Use search text as link text
           </label>
-          <input type="text" id="linkAcrossCustomText" placeholder="Custom link text (optional)" autocomplete="off" style="display:none" />
+          <input type="text" id="linkAcrossCustomText" placeholder="Custom link text (optional)" autocomplete="off"
+            style="display:none" />
           <button id="btnLinkAcrossApply" class="btn-primary">Apply Links</button>
           <div class="deploy-feedback" id="linkAcrossFeedback"></div>
         </div>
@@ -234,4 +239,5 @@
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <script src="editor.js"></script>
 </body>
+
 </html>

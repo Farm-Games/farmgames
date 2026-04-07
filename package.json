@@ -5,7 +5,8 @@
   "main": "generate_site.js",
   "scripts": {
     "test": "node --test 'tests/**/*.test.js'",
-    "editor": "node editor/start.js"
+    "editor": "node editor/start.js",
+    "preview": "node preview-site.js"
   },
   "author": "",
   "license": "ISC",

@@ -3,7 +3,7 @@ const showdown = require('showdown');
 const { INPUT_FOLDER, OUTPUT_FOLDER, WEB_ROOT } = require('./constants-html');
 const { clearOutputFolder, copyCSSFilesToOutputFolder, copyIntroFilesToOutputFolder, copyImageFilesToOutputFolder } = require('./utilities');
 const { mountIntroScreen } = require('./src/intro');
-const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage } = require('./shared/template');
+const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage, wrapTables } = require('./shared/template');
 
 const converter = new showdown.Converter(SHOWDOWN_OPTIONS);
 
@@ -58,7 +58,7 @@ const convertMarkdownToHTML = () => {
   const files = fs.readdirSync(INPUT_FOLDER).filter((file) => file.endsWith('.md'));
   files.forEach((file) => {
     const input = fs.readFileSync(INPUT_FOLDER + file, 'utf8');
-    const html = converter.makeHtml(input);
+    const html = wrapTables(converter.makeHtml(input));
     const outputPath = OUTPUT_FOLDER + file.replace('.md', '.html');
     fs.writeFileSync(outputPath, pageBodyTemplate(file, files, html, !file.includes('index')));
     console.log(`Converted ${file} to ${outputPath}`);

@@ -4,7 +4,7 @@ const express = require('express');
 const multer = require('multer');
 const showdown = require('showdown');
 const { execSync } = require('child_process');
-const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage } = require('../shared/template');
+const { fileNameToTitle, SHOWDOWN_OPTIONS, renderPage, wrapTables } = require('../shared/template');
 const { replaceLinkInLine } = require('../shared/link-replace');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -182,7 +182,7 @@ app.post('/api/preview', (req, res) => {
   const { markdown, pageName } = req.body;
   const host = req.headers.host || `localhost:${PORT}`;
   const baseTag = `<base href="http://${host}/" />`;
-  const html = converter.makeHtml(markdown || '');
+  const html = wrapTables(converter.makeHtml(markdown || ''));
   res.send(renderPage({
     cssRoot: '/site-css/',
     navRoot: '#',
@@ -364,6 +364,57 @@ app.post('/api/update', (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ======= PREVIEW SERVER =======
+
+const { spawn } = require('child_process');
+let previewProcess = null;
+const PREVIEW_PORT = 4000;
+
+app.post('/api/preview-server/start', (req, res) => {
+  if (previewProcess) {
+    return res.json({ running: true, port: PREVIEW_PORT });
+  }
+  previewProcess = spawn('node', [path.join(ROOT_DIR, 'preview-site.js')], {
+    cwd: ROOT_DIR,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    detached: false,
+    env: { ...process.env, BROWSER: 'none' },
+  });
+  previewProcess.on('close', () => { previewProcess = null; });
+
+  let responded = false;
+  const onReady = (data) => {
+    if (!responded && data.toString().includes('Site preview running')) {
+      responded = true;
+      res.json({ running: true, port: PREVIEW_PORT });
+    }
+  };
+  previewProcess.stdout.on('data', onReady);
+  previewProcess.stderr.on('data', onReady);
+
+  setTimeout(() => {
+    if (!responded) {
+      responded = true;
+      res.json({ running: true, port: PREVIEW_PORT });
+    }
+  }, 15000);
+});
+
+app.get('/api/preview-server/status', (req, res) => {
+  res.json({ running: !!previewProcess, port: PREVIEW_PORT });
+});
+
+function killPreviewServer() {
+  if (previewProcess) {
+    previewProcess.kill();
+    previewProcess = null;
+  }
+}
+
+process.on('exit', killPreviewServer);
+process.on('SIGINT', () => { killPreviewServer(); process.exit(); });
+process.on('SIGTERM', () => { killPreviewServer(); process.exit(); });
 
 // ======= START =======
 

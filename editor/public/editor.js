@@ -173,6 +173,20 @@
   editor.addCommand('markdown', 'wikiLink', () => { openLinkPageModal(); return true; });
 
   editor.on('change', () => {
+    if (editor.isWysiwygMode()) {
+      const wwEl = document.querySelector('.toastui-editor-ww-container .ProseMirror');
+      if (wwEl) {
+        const lastChild = wwEl.lastElementChild;
+        if (lastChild && lastChild.tagName === 'TABLE') {
+          const p = document.createElement('p');
+          p.innerHTML = '<br>';
+          wwEl.appendChild(p);
+        }
+      }
+    }
+  });
+
+  editor.on('change', () => {
     dirty = true;
     updateUI();
     schedulePreview();
@@ -973,6 +987,26 @@
       btn.disabled = false;
       btn.textContent = '\u{1F504} Update';
     }
+  });
+
+  // Preview site
+  $('#btnPreview').addEventListener('click', async () => {
+    const btn = $('#btnPreview');
+    btn.disabled = true;
+    btn.textContent = 'Starting...';
+    try {
+      const result = await api('/api/preview-server/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const host = window.location.hostname;
+      window.open(`http://${host}:${result.port}`, '_blank');
+      showToast('Preview server running on port ' + result.port, 'success');
+    } catch (err) {
+      showToast('Preview failed: ' + err.message, 'error');
+    }
+    btn.disabled = false;
+    btn.textContent = '\u{1F441} Preview';
   });
 
   // Hamburger
