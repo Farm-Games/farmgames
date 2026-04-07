@@ -21,14 +21,17 @@ const parseLegacyPages = () => {
       pages.forEach((page) => {
         const { pageName, pageContent } = getPageAttributes(page);
 
-        const newContent = pageContent.split('\n').map((line) => {
-          const modifiedContentWithSitename = replaceSitename(line);
-          const modifiedContentWithLists = replaceLists(modifiedContentWithSitename);
-          const modifiedContentWithBold = replaceBold(modifiedContentWithLists);
-          const modifiedContentWithHeaders = replaceHeaders(modifiedContentWithBold);
-          const modifiedContentWithLinks = replaceLinks(modifiedContentWithHeaders, pages);
-          return modifiedContentWithLinks;
-        }).join('\n');
+        const newContent = pageContent
+          .split('\n')
+          .map((line) => {
+            const modifiedContentWithSitename = replaceSitename(line);
+            const modifiedContentWithLists = replaceLists(modifiedContentWithSitename);
+            const modifiedContentWithBold = replaceBold(modifiedContentWithLists);
+            const modifiedContentWithHeaders = replaceHeaders(modifiedContentWithBold);
+            const modifiedContentWithLinks = replaceLinks(modifiedContentWithHeaders, pages);
+            return modifiedContentWithLinks;
+          })
+          .join('\n');
 
         const modifiedContentWithGalleryLinks = replaceGalleryLinks(newContent);
 

@@ -1,53 +1,55 @@
 const fs = require('fs');
 const { OUTPUT_FOLDER, SITENAME, INDEX_PAGE } = require('./constants-md');
 
+const SRC_DIR = __dirname + '/src';
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|svg|webp)$/i;
+const MEDIA_EXTENSIONS = /\.(mp4|webm|ogg|mp3|wav|m4a)$/i;
+const GALLERY_REGEX = /<gallery[^>]*>(.*?)<\/gallery>/s;
+const LIST_REGEX = /(?<!<[^>]*?)(\*+)([^*]+)(?![^<]*?>)/gm;
+const BOLD_REGEX = /'''(.*?)'''/gm;
+const HEADER_REGEX = /(?<!<[^>]*?)(==+)([^=]+)(==+)(?![^<]*?>)/gm;
+const SITENAME_REGEX = /{{SITENAME}}/gm;
+
 const sanitizeLink = (link) => `${link.replace(/[^a-z0-9]/gi, '_')}`.toLowerCase();
+
+const isLinkForImage = (link) => link.match(/\.(jpeg|jpg|gif|png|svg)$/i);
 
 const findNestedMatches = (text) => {
   const matches = [];
-  let depth = 0; // Track nesting depth
-  let currentMatch = ''; // Store current match content
-  let isInMatch = false; // Flag to indicate if we are inside the outer [[ ]]
+  let depth = 0;
+  let currentMatch = '';
+  let isInMatch = false;
 
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
 
     if (char === '[' && text[i + 1] === '[') {
-      // We found an opening [[
       if (depth === 0 && isInMatch) {
-        // If we are at the outermost level and in a match, capture the content
         matches.push(currentMatch);
-        currentMatch = ''; // Reset for the next match
+        currentMatch = '';
       }
-
-      // Increase the depth
       depth++;
-      currentMatch += '[['; // Include the opening brackets
-      i++; // Skip the next '[' because we already handled it
+      currentMatch += '[[';
+      i++;
       continue;
     }
 
     if (char === ']' && text[i + 1] === ']') {
-      // We found a closing ]]
       depth--;
-      currentMatch += ']]'; // Include the closing brackets
-
+      currentMatch += ']]';
       if (depth === 0) {
-        // When we reach the outermost level, capture the current match
-        matches.push(currentMatch); // Push the outer match
-        currentMatch = ''; // Reset for the next outer match
-        isInMatch = false; // Reset match flag
+        matches.push(currentMatch);
+        currentMatch = '';
+        isInMatch = false;
       }
-      i++; // Skip the next ']' because we already handled it
+      i++;
       continue;
     }
 
-    // Accumulate characters inside [[ ]]
     if (depth > 0) {
       currentMatch += char;
     }
 
-    // Start accumulating text after the first opening [[
     if (depth > 0 && !isInMatch) {
       isInMatch = true;
     }
@@ -56,30 +58,25 @@ const findNestedMatches = (text) => {
   return matches || [];
 };
 
-const convertGalleryLinksToHTML = (input) => {
-  // Split the input by new lines
-  const lines = input.split('\n').filter((line) => line.trim() !== '');
-
-  return lines
-    .map((line) => {
-      // Split the line into parts using the pipe (|) as a separator
-      const parts = line.split('|');
-
-      // Extract image source (img) and text for link and caption
-      const imgSrc = parts[0].trim();
-      const linkText = parts[1].replace('link=', '').trim();
-      const caption = parts[2] ? parts[2].trim() : linkText;
-
-      // Construct the HTML anchor tag with <figure> and <figcaption>
-      return `
+const buildGalleryFigure = (imgSrc, linkText, caption) => `
           <figure>
             <img src="${sanitizeLink(imgSrc)}" alt="${imgSrc}" />
             <a href="${sanitizeLink(linkText)}">${caption}</a>
           </figure>
       `;
+
+const convertGalleryLinksToHTML = (input) =>
+  input
+    .split('\n')
+    .filter((line) => line.trim() !== '')
+    .map((line) => {
+      const parts = line.split('|');
+      const imgSrc = parts[0].trim();
+      const linkText = parts[1].replace('link=', '').trim();
+      const caption = parts[2] ? parts[2].trim() : linkText;
+      return buildGalleryFigure(imgSrc, linkText, caption);
     })
     .join('\n');
-};
 
 const clearOutputFolder = (folder) => {
   if (!fs.existsSync(folder)) {
@@ -87,17 +84,15 @@ const clearOutputFolder = (folder) => {
     console.log('Output folder has been created');
     return;
   }
-
   const files = fs.readdirSync(folder);
   for (const file of files) {
-    fs.unlink(folder + file, (err) => {});
+    fs.unlink(folder + file, () => {});
   }
   console.log('Output folder has been cleared');
 };
 
 const writeFile = (pagePath, pageContent) => {
-  const shouldAlsoWriteToIndex = pagePath.includes('farm_games_wiki');
-  if (shouldAlsoWriteToIndex) {
+  if (pagePath.includes('farm_games_wiki')) {
     writeFile(INDEX_PAGE, pageContent);
   }
   try {
@@ -114,33 +109,38 @@ const copyFileToOutputFolder = (filePath, outputFolder) => {
   console.log(`File ${fileName} has been copied`);
 };
 
-const copyCSSFilesToOutputFolder = (outputFolder) => {
-  copyFileToOutputFolder(__dirname + '/src' + '/styles.css', outputFolder);
-  copyFileToOutputFolder(__dirname + '/src' + '/reset.css', outputFolder);
-};
-
-const copyIntroFilesToOutputFolder = (outputFolder) => {
-  copyFileToOutputFolder(__dirname + '/src' + '/intro.mp4', outputFolder);
-  copyFileToOutputFolder(__dirname + '/src' + '/intro.mp3', outputFolder);
-};
-
-const copyImageFilesToOutputFolder = (outputFolder) => {
-  const imagesDir = __dirname + '/src/images';
-  const outputImagesDir = outputFolder + 'images/';
-  if (!fs.existsSync(imagesDir)) return;
-  if (!fs.existsSync(outputImagesDir)) {
-    fs.mkdirSync(outputImagesDir, { recursive: true });
+const copyDirectoryByExtension = (srcDir, outputDir, extensionRegex, label) => {
+  if (!fs.existsSync(srcDir)) return;
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
   }
-  const files = fs.readdirSync(imagesDir).filter((f) => /\.(jpe?g|png|gif|svg|webp)$/i.test(f));
+  const files = fs.readdirSync(srcDir).filter((f) => extensionRegex.test(f));
   files.forEach((file) => {
-    fs.copyFileSync(imagesDir + '/' + file, outputImagesDir + file);
-    console.log(`Image ${file} has been copied`);
+    fs.copyFileSync(srcDir + '/' + file, outputDir + file);
+    console.log(`${label} ${file} has been copied`);
   });
 };
 
-const isLinkForImage = (link) => link.match(/\.(jpeg|jpg|gif|png|svg)$/i);
+const copyCSSFilesToOutputFolder = (outputFolder) => {
+  copyFileToOutputFolder(SRC_DIR + '/styles.css', outputFolder);
+  copyFileToOutputFolder(SRC_DIR + '/reset.css', outputFolder);
+};
 
-const isLinkForPage = (link) => !isLinkForImage(link);
+const copyIntroFilesToOutputFolder = (outputFolder) => {
+  copyFileToOutputFolder(SRC_DIR + '/intro.mp4', outputFolder);
+  copyFileToOutputFolder(SRC_DIR + '/intro.mp3', outputFolder);
+};
+
+const copyImageFilesToOutputFolder = (outputFolder) =>
+  copyDirectoryByExtension(
+    SRC_DIR + '/images',
+    outputFolder + 'images/',
+    IMAGE_EXTENSIONS,
+    'Image',
+  );
+
+const copyMediaFilesToOutputFolder = (outputFolder) =>
+  copyDirectoryByExtension(SRC_DIR + '/media', outputFolder + 'media/', MEDIA_EXTENSIONS, 'Media');
 
 const getPageAttributes = (page) => {
   const pageName = sanitizeLink(page.title[0]);
@@ -148,87 +148,71 @@ const getPageAttributes = (page) => {
   return { pageName, pageContent };
 };
 
-const replaceSitename = (content) => content.replaceAll(/{{SITENAME}}/gm, SITENAME);
+const replaceSitename = (content) => content.replaceAll(SITENAME_REGEX, SITENAME);
 
-const replaceLists = (content) => {
-  const listRegex = /(?<!<[^>]*?)(\*+)([^*]+)(?![^<]*?>)/gm;
-  return content.replaceAll(listRegex, (match) => {
+const replaceLists = (content) =>
+  content.replaceAll(LIST_REGEX, (match) => {
     const listLevel = match.match(/\*/g).length;
     const listText = match.replace(/\*/g, '').trim();
     return `${'  '.repeat(listLevel - 1)}- ${listText}`;
   });
-};
 
-const replaceBold = (content) => content.replaceAll(/'''(.*?)'''/gm, '**$1**');
+const replaceBold = (content) => content.replaceAll(BOLD_REGEX, '**$1**');
 
 const replaceHeaders = (content) =>
-  content.replaceAll(/(?<!<[^>]*?)(==+)([^=]+)(==+)(?![^<]*?>)/gm, (match) => {
+  content.replaceAll(HEADER_REGEX, (match) => {
     const headerLevel = match.match(/=/g).length - 1;
-    if (headerLevel > 6 || headerLevel <= 1) {
-      return match;
-    }
+    if (headerLevel > 6 || headerLevel <= 1) return match;
     const headerText = match.replace(/=/g, '').trim();
     const pound = '#'.repeat(headerLevel);
     return `${pound} ${headerText} ${pound}`;
   });
 
-const doesPageExist = (pageName, allPages) => allPages.some((page) => page.title[0].toLowerCase() === pageName.toLowerCase());
+const doesPageExist = (pageName, allPages) =>
+  allPages.some((page) => page.title[0].toLowerCase() === pageName.toLowerCase());
 
 const replaceLinks = (content, allPages) =>
-  findNestedMatches(content).reduce((content, match) => {
+  findNestedMatches(content).reduce((acc, match) => {
     const linkParts = match.slice(2, -2).split('|');
     const link = doesPageExist(linkParts[0], allPages) ? sanitizeLink(linkParts[0]) : '#a';
     if (linkParts.length > 2) {
-      return (
-`
-![${linkParts[2]}](${link})
-> ${replaceLinks(linkParts[2], allPages)}
-`);
+      return `\n![${linkParts[2]}](${link})\n> ${replaceLinks(linkParts[2], allPages)}\n`;
     }
     if (isLinkForImage(linkParts[0])) {
-      return content.replace(match, `![${linkParts[1]}](${link})`);
+      return acc.replace(match, `![${linkParts[1]}](${link})`);
     }
     if (linkParts.length > 1) {
-      return content.replace(match, `[${linkParts[1]}](${link})`);
+      return acc.replace(match, `[${linkParts[1]}](${link})`);
     }
-    return content.replace(match, `[${linkParts[0]}](${link})`);
+    return acc.replace(match, `[${linkParts[0]}](${link})`);
   }, content);
 
 const replaceGalleryLinks = (content) => {
-  // Define a regex to match the content inside <gallery>...</gallery>
-  const galleryRegex = /<gallery[^>]*>(.*?)<\/gallery>/s;
-
-  // Match the content inside <gallery>...</gallery>
-  const match = content.match(galleryRegex);
-
-  if (match) {
-    // Extract the content inside <gallery>
-    const galleryContent = match[1];
-
-    // Transform the content inside the gallery tag
-    const transformedGalleryContent = convertGalleryLinksToHTML(galleryContent);
-
-    // Replace the old gallery content with the transformed one
-    return content.replace(galleryContent, transformedGalleryContent).replace('<gallery', '<gallery class="gallery"');
-  } else {
-    // If no <gallery> tag is found, return the original document
-    return content;
-  }
+  const match = content.match(GALLERY_REGEX);
+  if (!match) return content;
+  const galleryContent = match[1];
+  const transformed = convertGalleryLinksToHTML(galleryContent);
+  return content
+    .replace(galleryContent, transformed)
+    .replace('<gallery', '<gallery class="gallery"');
 };
 
-exports.replaceLinks = replaceLinks;
-exports.writeFile = writeFile;
-exports.getPageAttributes = getPageAttributes;
-exports.replaceHeaders = replaceHeaders;
-exports.copyFileToOutputFolder = copyFileToOutputFolder;
-exports.replaceSitename = replaceSitename;
-exports.replaceBold = replaceBold;
-exports.replaceLists = replaceLists;
-exports.copyCSSFilesToOutputFolder = copyCSSFilesToOutputFolder;
-exports.copyIntroFilesToOutputFolder = copyIntroFilesToOutputFolder;
-exports.copyImageFilesToOutputFolder = copyImageFilesToOutputFolder;
-exports.clearOutputFolder = clearOutputFolder;
-exports.replaceGalleryLinks = replaceGalleryLinks;
-exports.sanitizeLink = sanitizeLink;
-exports.convertGalleryLinksToHTML = convertGalleryLinksToHTML;
-exports.findNestedMatches = findNestedMatches;
+module.exports = {
+  replaceLinks,
+  writeFile,
+  getPageAttributes,
+  replaceHeaders,
+  copyFileToOutputFolder,
+  replaceSitename,
+  replaceBold,
+  replaceLists,
+  copyCSSFilesToOutputFolder,
+  copyIntroFilesToOutputFolder,
+  copyImageFilesToOutputFolder,
+  copyMediaFilesToOutputFolder,
+  clearOutputFolder,
+  replaceGalleryLinks,
+  sanitizeLink,
+  convertGalleryLinksToHTML,
+  findNestedMatches,
+};
