@@ -45,14 +45,20 @@ The following season, after the team acquired [Dean Resler](dean_resler) thanks 
 | 1980 | Cleveland Red Roosters | 27 | 40 | 67 |
 | 1981 | Cleveland Red Roosters | 24 | 38 | 62 |
 
-|  |  |  |  |  |
-| --- | --- | --- | --- | --- |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| Year | Team | Goals | Assists | Total Pts. |
+| ---- | ---- | ----- | ------- | ---------- |
+| 1982 | Cleveland Red Roosters | 39 | 36 | 75 |
+| 1983 | Cleveland Red Roosters (Den.) | 33 | 52 | 85 |
+| 1984 | Cleveland Red Roosters (Den.) | 31 | 50 | 81 |
+| 1985 | Cleveland Red Roosters (Den.) | 28 | 62 | 90 |
+| 1986 | Cleveland Red Roosters | 29 | 53 | 82 |
+| 1987 | Cleveland Red Roosters | 17 | 41 | 58 |
+| 1988 | Cleveland Red Roosters | 37 | 78 | 115 |
+| 1989 | Cleveland Red Roosters | 29 | 71 | 100 |
+| 1990 | Halifax Walrus | 26 | 54 | 80 |
+
+| Year | Team | Goals | Assists | Total Pts |
+| ---- | ---- | ----- | ------- | --------- |
+| 1991 | Halifax Walrus | 27 | 44 | 71 |
+| 1992 | Halifax Walrus | 30 | 55 | 85 |
+| 1993 | Halifax Walrus | 19 | 42 | 61 |
