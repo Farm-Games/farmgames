@@ -44,3 +44,15 @@ The following season, after the team acquired [Dean Resler](dean_resler) thanks 
 | 1979 | St. John's Mariners | 10 | 13 | 23 |
 | 1980 | Cleveland Red Roosters | 27 | 40 | 67 |
 | 1981 | Cleveland Red Roosters | 24 | 38 | 62 |
+
+|  |  |  |  |  |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
