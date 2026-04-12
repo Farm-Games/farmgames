@@ -4,6 +4,7 @@ import { api, postJson } from '../lib/api.js';
 import { showToast } from '../lib/helpers.js';
 import { updateUI, openModalFn } from '../lib/ui.js';
 import { renderPreview } from '../lib/preview.js';
+import { openConflictModal } from './conflicts.js';
 
 const showDeployFeedback = (msg, type) => {
   $('#deployFeedback').textContent = msg;
@@ -65,8 +66,24 @@ const deploy = async (editor) => {
   btn.textContent = 'Deploying...';
   showDeployFeedback('Deploying your changes...', '');
   try {
-    const result = await postJson('/api/deploy', { message: msg, files });
-    if (result.deployed) {
+    const res = await fetch('/api/deploy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, files }),
+    });
+    const result = await res.json();
+
+    if (res.status === 409 && result.conflict) {
+      showDeployFeedback('Conflicts detected -- opening resolver...', 'error');
+      openConflictModal(result.files);
+      btn.disabled = false;
+      btn.textContent = 'Deploy Selected';
+      return;
+    }
+
+    if (!res.ok) {
+      showDeployFeedback(result.error || 'Deploy failed.', 'error');
+    } else if (result.deployed) {
       showDeployFeedback('Deployed successfully! Your changes are now live.', 'success');
       $('#deployMessage').value = '';
       state.dirty = false;

@@ -478,6 +478,132 @@ body {
 .toast.toast-success { border-left: 4px solid var(--emerald-green); }
 .toast.toast-error { border-left: 4px solid var(--danger); }
 
+/* ===== CONFLICT RESOLUTION ===== */
+
+.conflict-bulk-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.conflict-cards {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.conflict-card {
+  background: #0a1929;
+  border: 1px solid #1a3a5c;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.conflict-card-header {
+  padding: 8px 12px;
+  font-size: 0.8em;
+  color: var(--gray-light);
+  border-bottom: 1px solid #1a3a5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conflict-card-file {
+  font-weight: 600;
+  color: var(--ice-blue);
+}
+
+.conflict-card-body {
+  display: flex;
+}
+
+.conflict-side {
+  flex: 1;
+  padding: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  min-height: 40px;
+}
+
+.conflict-mine {
+  background: rgba(56, 142, 60, 0.1);
+  border-right: 1px solid #1a3a5c;
+}
+
+.conflict-theirs {
+  background: rgba(74, 144, 226, 0.1);
+}
+
+.conflict-side-label {
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.conflict-mine .conflict-side-label {
+  color: var(--emerald-green);
+}
+
+.conflict-theirs .conflict-side-label {
+  color: var(--deep-blue);
+}
+
+.conflict-card-actions {
+  display: flex;
+  border-top: 1px solid #1a3a5c;
+}
+
+.conflict-card-actions button {
+  flex: 1;
+  padding: 8px !important;
+  font-size: 0.8em !important;
+  border: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+}
+
+.conflict-btn-mine {
+  background: rgba(56, 142, 60, 0.2) !important;
+  color: var(--emerald-green) !important;
+}
+
+.conflict-btn-mine:hover {
+  background: rgba(56, 142, 60, 0.4) !important;
+}
+
+.conflict-btn-theirs {
+  background: rgba(74, 144, 226, 0.2) !important;
+  color: var(--deep-blue) !important;
+  border-left: 1px solid #1a3a5c !important;
+}
+
+.conflict-btn-theirs:hover {
+  background: rgba(74, 144, 226, 0.4) !important;
+}
+
+.conflict-resolved {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.conflict-empty {
+  text-align: center;
+  color: var(--gray-dark);
+  font-style: italic;
+  padding: 20px;
+}
+
 /* ===== LINK ACROSS PAGES ===== */
 
 .link-across-controls {

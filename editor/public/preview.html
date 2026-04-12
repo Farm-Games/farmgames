@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conflict Resolution UI Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="editor.css" />
+  <style>
+    body { padding: 20px; }
+    .preview-section { margin-bottom: 40px; }
+    .preview-label { font-size: 1.2em; color: var(--ice-blue); margin-bottom: 12px; font-family: 'Jersey 15', serif; }
+
+    /* Force modal visible for preview */
+    .modal-overlay.preview-visible {
+      display: flex;
+      position: relative;
+      background: transparent;
+      z-index: 1;
+    }
+    .modal-overlay.preview-visible .modal {
+      max-height: none;
+      width: 100%;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="font-family: 'Jersey 15', serif; color: var(--ice-blue); margin-bottom: 20px;">Conflict Resolution UI Preview</h1>
+  <p style="color: var(--gray-light); margin-bottom: 30px;">This is a static mock showing what the conflict resolution modal looks like with sample data.</p>
+
+  <!-- Mock conflict modal -->
+  <div class="modal-overlay preview-visible">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Resolve Conflicts</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="deploy-hint">Your changes conflict with changes made by someone else. Resolve each conflict below, then finish deploying.</p>
+        <div class="conflict-bulk-actions">
+          <button class="btn-sm">Accept All Mine</button>
+          <button class="btn-sm">Accept All Theirs</button>
+          <button class="btn-sm btn-danger">Discard My Changes</button>
+        </div>
+        <div class="conflict-cards">
+
+          <!-- Conflict Card 1 -->
+          <div class="conflict-card">
+            <div class="conflict-card-header">
+              <span class="conflict-card-file">src/pages/calgary_jailbirds.md</span>
+              <span>Conflict #1</span>
+            </div>
+            <div class="conflict-card-body">
+              <div class="conflict-side conflict-mine">
+                <span class="conflict-side-label">Your changes</span>The Calgary Jailbirds won the **2021 Denley Cup** after a hard-fought series against the New Orleans Braves, winning 4-2.</div>
+              <div class="conflict-side conflict-theirs">
+                <span class="conflict-side-label">Their changes</span>The Calgary Jailbirds won the 2021 Denley Cup, defeating the New Orleans Braves in six games.</div>
+            </div>
+            <div class="conflict-card-actions">
+              <button class="conflict-btn-mine">Accept Mine</button>
+              <button class="conflict-btn-theirs">Accept Theirs</button>
+            </div>
+          </div>
+
+          <!-- Conflict Card 2 -->
+          <div class="conflict-card">
+            <div class="conflict-card-header">
+              <span class="conflict-card-file">src/pages/calgary_jailbirds.md</span>
+              <span>Conflict #2</span>
+            </div>
+            <div class="conflict-card-body">
+              <div class="conflict-side conflict-mine">
+                <span class="conflict-side-label">Your changes</span>### Notable Players
+
+- [Kev Burgess](kev_burgess) - Captain
+- [Sean Thompson](sean_thompson) - Alternate Captain
+- [Blark Darson](blark_darson) - Star Forward</div>
+              <div class="conflict-side conflict-theirs">
+                <span class="conflict-side-label">Their changes</span>### Key Players
+
+- [Kev Burgess](kev_burgess)
+- [Sean Thompson](sean_thompson)
+- [Blark Darson](blark_darson)
+- [Noel Wyndandyk](noel_wyndandyk)</div>
+            </div>
+            <div class="conflict-card-actions">
+              <button class="conflict-btn-mine">Accept Mine</button>
+              <button class="conflict-btn-theirs">Accept Theirs</button>
+            </div>
+          </div>
+
+          <!-- Conflict Card 3 (resolved state) -->
+          <div class="conflict-card conflict-resolved">
+            <div class="conflict-card-header">
+              <span class="conflict-card-file">src/pages/index.md</span>
+              <span>Conflict #1</span>
+            </div>
+            <div class="conflict-card-body">
+              <div class="conflict-side conflict-mine">
+                <span class="conflict-side-label">Your changes</span>[Browse all pages](sitemap)</div>
+              <div class="conflict-side conflict-theirs">
+                <span class="conflict-side-label">Their changes</span>[View all wiki pages](sitemap)</div>
+            </div>
+            <div class="conflict-card-actions">
+              <button class="conflict-btn-mine">Accept Mine</button>
+              <button class="conflict-btn-theirs">Accept Theirs</button>
+            </div>
+          </div>
+
+          <!-- Conflict Card 4 - empty mine side -->
+          <div class="conflict-card">
+            <div class="conflict-card-header">
+              <span class="conflict-card-file">src/pages/dean_resler.md</span>
+              <span>Conflict #1</span>
+            </div>
+            <div class="conflict-card-body">
+              <div class="conflict-side conflict-mine">
+                <span class="conflict-side-label">Your changes</span>(empty)</div>
+              <div class="conflict-side conflict-theirs">
+                <span class="conflict-side-label">Their changes</span>Dean Resler was a legendary defenseman known for his incredible shot-blocking ability and leadership on and off the ice.</div>
+            </div>
+            <div class="conflict-card-actions">
+              <button class="conflict-btn-mine">Accept Mine</button>
+              <button class="conflict-btn-theirs">Accept Theirs</button>
+            </div>
+          </div>
+
+        </div>
+        <button class="btn-primary btn-deploy" disabled>Finish Deploy</button>
+        <div class="deploy-feedback">2 of 4 conflicts resolved</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.conflict-btn-mine, .conflict-btn-theirs').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.conflict-card');
+        card.classList.add('conflict-resolved');
+        const total = document.querySelectorAll('.conflict-card').length;
+        const resolved = document.querySelectorAll('.conflict-resolved').length;
+        document.querySelector('.deploy-feedback').textContent = `${resolved} of ${total} conflicts resolved`;
+        if (resolved >= total) {
+          document.querySelector('.btn-deploy').disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

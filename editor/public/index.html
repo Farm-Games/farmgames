@@ -142,6 +142,27 @@
     </div>
   </div>
 
+  <!-- ===== CONFLICT RESOLUTION MODAL ===== -->
+  <div class="modal-overlay" id="conflictModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h2>Resolve Conflicts</h2>
+        <button class="modal-close" data-close="conflictModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="deploy-hint">Your changes conflict with changes made by someone else. Resolve each conflict below, then finish deploying.</p>
+        <div class="conflict-bulk-actions">
+          <button id="btnAcceptAllMine" class="btn-sm">Accept All Mine</button>
+          <button id="btnAcceptAllTheirs" class="btn-sm">Accept All Theirs</button>
+          <button id="btnConflictReset" class="btn-sm btn-danger">Discard My Changes</button>
+        </div>
+        <div class="conflict-cards" id="conflictCards"></div>
+        <button id="btnConflictFinish" class="btn-primary btn-deploy" disabled>Finish Deploy</button>
+        <div class="deploy-feedback" id="conflictFeedback"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== LINK ACROSS PAGES MODAL ===== -->
   <div class="modal-overlay" id="linkAcrossModal">
     <div class="modal modal-lg">
