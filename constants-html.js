@@ -3,7 +3,4 @@ const INPUT_FOLDER = __dirname + '/src/pages/';
 const WEB_ROOT = '/';
 const SITENAME = 'Farm Games Wiki';
 
-exports.OUTPUT_FOLDER = OUTPUT_FOLDER;
-exports.INPUT_FOLDER = INPUT_FOLDER;
-exports.WEB_ROOT = WEB_ROOT;
-exports.SITENAME = SITENAME;
+module.exports = { OUTPUT_FOLDER, INPUT_FOLDER, WEB_ROOT, SITENAME };

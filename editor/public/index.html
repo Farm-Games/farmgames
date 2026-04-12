@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,11 @@
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="editor.css" />
 </head>
+
 <body>
   <!-- ===== TOOLBAR ===== -->
   <header class="toolbar">
@@ -30,6 +33,8 @@
       <div class="toolbar-group">
         <button id="btnDeployOpen" title="Deploy changes to the live website">&#128640; Deploy</button>
         <button id="btnUpdate" title="Pull latest changes and restart">&#128260; Update</button>
+        <button id="btnPreview" title="Open site preview">&#128065; Preview</button>
+        <button id="btnSettings" title="Site settings">&#9881; Settings</button>
       </div>
     </nav>
   </header>
@@ -165,10 +170,44 @@
             <input type="checkbox" id="linkAcrossReplaceText" checked />
             Use search text as link text
           </label>
-          <input type="text" id="linkAcrossCustomText" placeholder="Custom link text (optional)" autocomplete="off" style="display:none" />
+          <input type="text" id="linkAcrossCustomText" placeholder="Custom link text (optional)" autocomplete="off"
+            style="display:none" />
           <button id="btnLinkAcrossApply" class="btn-primary">Apply Links</button>
           <div class="deploy-feedback" id="linkAcrossFeedback"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS MODAL ===== -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Site Settings</h2>
+        <button class="modal-close" data-close="settingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <label for="settingSiteTitle">Site Title</label>
+          <input type="text" id="settingSiteTitle" placeholder="e.g. Farm Games Wiki" />
+          <p class="input-hint">Shown in the nav bar and browser tab</p>
+        </div>
+        <div class="settings-group">
+          <label for="settingPageTitle">Page Title Template</label>
+          <input type="text" id="settingPageTitle" placeholder="e.g. {{pageTitle}} | {{siteTitle}}" />
+          <p class="input-hint">Use {{pageTitle}} and {{siteTitle}} as placeholders</p>
+        </div>
+        <div class="settings-group">
+          <label>Favicon</label>
+          <div class="favicon-row">
+            <img id="faviconPreview" class="favicon-preview" />
+            <button id="btnUploadFavicon" class="btn-sm">Upload Favicon</button>
+            <input type="file" id="faviconFileInput" accept=".ico,.png,.svg" style="display:none" />
+          </div>
+          <p class="input-hint">Accepts .ico, .png, or .svg</p>
+        </div>
+        <button id="btnSaveSettings" class="btn-primary">Save Settings</button>
+        <div class="deploy-feedback" id="settingsFeedback"></div>
       </div>
     </div>
   </div>
@@ -232,6 +271,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.5"></script>
   <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.6"></script>
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-  <script src="editor.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
+
 </html>

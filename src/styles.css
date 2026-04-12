@@ -138,6 +138,25 @@ article .clearfix::after {
   clear: both;
 }
 
+/* ----- List Styling ----- */
+article ul,
+article ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+article li {
+  padding: 3px 0;
+  line-height: 1.5;
+}
+
+article ul ul,
+article ol ol,
+article ul ol,
+article ol ul {
+  margin: 4px 0;
+}
+
 /* ----- Blockquote Styling ----- */
 blockquote {
   background-color: var(--quote-background);
@@ -201,12 +220,14 @@ body > .nav {
 /* ----- Table Styling ----- */
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin: 20px 0;
 }
 
 table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 100%;
   font-size: 0.95em;
 }
 

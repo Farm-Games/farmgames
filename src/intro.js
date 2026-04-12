@@ -63,6 +63,6 @@ const mountIntroScreen = () => `
         </script>
     </div>
 </div>
-`
+`;
 
-exports.mountIntroScreen = mountIntroScreen;
+module.exports = { mountIntroScreen };

@@ -5,6 +5,9 @@ The Farm Games rock! This is the guide to all things Farm Games, and this guide 
 
 > "''Everyone has their own personal Denley in their lives. Could be you're trying to get a big promotion, or you're just getting by, one day at a time... I think immigrants could learn a thing or two about that.''" - [Phil Foesome](#a), unprompted ![thumb](file_screen_shot_2023_04_15_at_4_00_44_am_png)
 
+### [Browse all pages](sitemap)
+
+
 ### A Guide to Farm Games Teams
 
 ![The Chenlin Triangle of Success; the trifecta that keeps Farm Games moving and the blueprint for any would-be Denley Cup champions](/images/chenlin_triangle.PNG)
