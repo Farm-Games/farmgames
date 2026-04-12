@@ -500,7 +500,6 @@ body {
   background: #0a1929;
   border: 1px solid #1a3a5c;
   border-radius: 6px;
-  overflow: hidden;
 }
 
 .conflict-card-header {
@@ -557,6 +556,22 @@ body {
 
 .conflict-theirs .conflict-side-label {
   color: var(--deep-blue);
+}
+
+.conflict-side del {
+  background: rgba(231, 76, 60, 0.3);
+  color: #ff8a80;
+  text-decoration: line-through;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.conflict-side ins {
+  background: rgba(56, 142, 60, 0.3);
+  color: #a5d6a7;
+  text-decoration: none;
+  border-radius: 2px;
+  padding: 0 2px;
 }
 
 .conflict-card-actions {

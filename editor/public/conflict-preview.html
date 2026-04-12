@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conflict Resolution UI Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Jersey+15&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="editor.css" />
+    <style>
+      body {
+        padding: 20px;
+      }
+      .modal-overlay.preview-visible {
+        display: flex;
+        position: relative;
+        background: transparent;
+        z-index: 1;
+      }
+      .modal-overlay.preview-visible .modal {
+        max-height: none;
+        width: 100%;
+        max-width: 800px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-family: 'Jersey 15', serif; color: var(--ice-blue); margin-bottom: 20px">
+      Conflict Resolution UI Preview
+    </h1>
+    <p style="color: var(--gray-light); margin-bottom: 30px">
+      Static mock with diff highlighting. Click Accept buttons to see resolved state.
+    </p>
+
+    <div class="modal-overlay preview-visible">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h2>Resolve Conflicts</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="deploy-hint">
+            Your changes conflict with changes made by someone else. Resolve each conflict below,
+            then finish deploying.
+          </p>
+          <div class="conflict-bulk-actions">
+            <button class="btn-sm" id="mockAcceptAllMine">Accept All Mine</button>
+            <button class="btn-sm" id="mockAcceptAllTheirs">Accept All Theirs</button>
+            <button class="btn-sm btn-danger">Discard My Changes</button>
+          </div>
+          <div class="conflict-cards" id="mockCards"></div>
+          <button class="btn-primary btn-deploy" id="mockFinish" disabled>Finish Deploy</button>
+          <div class="deploy-feedback" id="mockFeedback">0 of 4 conflicts resolved</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      const MOCK_CONFLICTS = [
+        {
+          file: 'src/pages/calgary_jailbirds.md',
+          mine: 'The Calgary Jailbirds won the **2021 Denley Cup** after a hard-fought series against the New Orleans Braves, winning 4-2.',
+          theirs:
+            'The Calgary Jailbirds won the 2021 Denley Cup, defeating the New Orleans Braves in six games.',
+        },
+        {
+          file: 'src/pages/calgary_jailbirds.md',
+          mine: '### Notable Players\n\n- [Kev Burgess](kev_burgess) - Captain\n- [Sean Thompson](sean_thompson) - Alternate Captain\n- [Blark Darson](blark_darson) - Star Forward',
+          theirs:
+            '### Key Players\n\n- [Kev Burgess](kev_burgess)\n- [Sean Thompson](sean_thompson)\n- [Blark Darson](blark_darson)\n- [Noel Wyndandyk](noel_wyndandyk)',
+        },
+        {
+          file: 'src/pages/index.md',
+          mine: '[Browse all pages](sitemap)',
+          theirs: '[View all wiki pages](sitemap)',
+        },
+        {
+          file: 'src/pages/dean_resler.md',
+          mine: '',
+          theirs:
+            'Dean Resler was a legendary defenseman known for his incredible shot-blocking ability and leadership on and off the ice.',
+        },
+      ];
+
+      const escapeHtml = (s) =>
+        s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      const tokenize = (text) => text.split(/(\s+)/);
+
+      const lcs = (a, b) => {
+        const m = a.length,
+          n = b.length;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 1; i <= m; i++)
+          for (let j = 1; j <= n; j++)
+            dp[i][j] =
+              a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+        const result = [];
+        let i = m,
+          j = n;
+        while (i > 0 && j > 0) {
+          if (a[i - 1] === b[j - 1]) {
+            result.unshift(a[i - 1]);
+            i--;
+            j--;
+          } else if (dp[i - 1][j] > dp[i][j - 1]) i--;
+          else j--;
+        }
+        return result;
+      };
+
+      const highlightDiff = (text, other, tag) => {
+        const tokens = tokenize(text);
+        const otherTokens = tokenize(other);
+        const common = lcs(tokens, otherTokens);
+        let ci = 0;
+        return tokens
+          .map((t) => {
+            if (ci < common.length && t === common[ci]) {
+              ci++;
+              return escapeHtml(t);
+            }
+            if (/^\s+$/.test(t)) return escapeHtml(t);
+            return '<' + tag + '>' + escapeHtml(t) + '</' + tag + '>';
+          })
+          .join('');
+      };
+
+      const diffMine = (mine, theirs) =>
+        mine ? highlightDiff(mine, theirs, 'del') : '<em>(empty)</em>';
+      const diffTheirs = (theirs, mine) =>
+        theirs ? highlightDiff(theirs, mine, 'ins') : '<em>(empty)</em>';
+
+      const container = document.getElementById('mockCards');
+      const feedback = document.getElementById('mockFeedback');
+      const finishBtn = document.getElementById('mockFinish');
+
+      const updateCount = () => {
+        const total = document.querySelectorAll('.conflict-card').length;
+        const resolved = document.querySelectorAll('.conflict-resolved').length;
+        feedback.textContent = resolved + ' of ' + total + ' conflicts resolved';
+        finishBtn.disabled = resolved < total;
+      };
+
+      const resolveCard = (card) => {
+        card.classList.add('conflict-resolved');
+        updateCount();
+      };
+
+      container.innerHTML = MOCK_CONFLICTS.map(
+        (c, i) => `
+      <div class="conflict-card" id="mock-${i}">
+        <div class="conflict-card-header">
+          <span class="conflict-card-file">${c.file}</span>
+          <span>Conflict #${i + 1}</span>
+        </div>
+        <div class="conflict-card-body">
+          <div class="conflict-side conflict-mine">
+            <span class="conflict-side-label">Your changes</span>${diffMine(c.mine, c.theirs)}</div>
+          <div class="conflict-side conflict-theirs">
+            <span class="conflict-side-label">Their changes</span>${diffTheirs(c.theirs, c.mine)}</div>
+        </div>
+        <div class="conflict-card-actions">
+          <button class="conflict-btn-mine" data-idx="${i}">Accept Mine</button>
+          <button class="conflict-btn-theirs" data-idx="${i}">Accept Theirs</button>
+        </div>
+      </div>
+    `,
+      ).join('');
+
+      container.querySelectorAll('.conflict-btn-mine, .conflict-btn-theirs').forEach((btn) => {
+        btn.addEventListener('click', () =>
+          resolveCard(document.getElementById('mock-' + btn.dataset.idx)),
+        );
+      });
+
+      document.getElementById('mockAcceptAllMine').addEventListener('click', () => {
+        container.querySelectorAll('.conflict-card').forEach(resolveCard);
+      });
+      document.getElementById('mockAcceptAllTheirs').addEventListener('click', () => {
+        container.querySelectorAll('.conflict-card').forEach(resolveCard);
+      });
+
+      updateCount();
+    </script>
+  </body>
+</html>

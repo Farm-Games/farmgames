@@ -9,6 +9,62 @@ const CONFLICT_FINISH_SELECTOR = '#btnConflictFinish';
 
 let conflictData = [];
 
+const tokenize = (text) => text.split(/(\s+)/);
+
+const lcs = (a, b) => {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] =
+        a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+  const result = [];
+  let i = m,
+    j = n;
+  while (i > 0 && j > 0) {
+    if (a[i - 1] === b[j - 1]) {
+      result.unshift(a[i - 1]);
+      i--;
+      j--;
+    } else if (dp[i - 1][j] > dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
+  }
+  return result;
+};
+
+const highlightDiff = (text, other, tag) => {
+  const tokens = tokenize(text);
+  const otherTokens = tokenize(other);
+  const common = new Set(lcs(tokens, otherTokens));
+  let commonIdx = 0;
+  return tokens
+    .map((token) => {
+      if (commonIdx < common.size && token === [...common][commonIdx]) {
+        commonIdx++;
+        return escapeHtml(token);
+      }
+      if (/^\s+$/.test(token)) return escapeHtml(token);
+      return `<${tag}>${escapeHtml(token)}</${tag}>`;
+    })
+    .join('');
+};
+
+const diffMine = (mine, theirs) => {
+  if (!mine) return '<em>(empty)</em>';
+  return highlightDiff(mine, theirs, 'del');
+};
+
+const diffTheirs = (theirs, mine) => {
+  if (!theirs) return '<em>(empty)</em>';
+  return highlightDiff(theirs, mine, 'ins');
+};
+
 const showConflictFeedback = (msg, type) => {
   $(CONFLICT_FEEDBACK_SELECTOR).textContent = msg;
   $(CONFLICT_FEEDBACK_SELECTOR).className = 'deploy-feedback' + (type ? ' ' + type : '');
@@ -24,9 +80,9 @@ const renderConflictCard = (fileEntry, conflict) =>
     </div>
     <div class="conflict-card-body">
       <div class="conflict-side conflict-mine">
-        <span class="conflict-side-label">Your changes</span>${escapeHtml(conflict.mine || '(empty)')}</div>
+        <span class="conflict-side-label">Your changes</span>${diffMine(conflict.mine, conflict.theirs)}</div>
       <div class="conflict-side conflict-theirs">
-        <span class="conflict-side-label">Their changes</span>${escapeHtml(conflict.theirs || '(empty)')}</div>
+        <span class="conflict-side-label">Their changes</span>${diffTheirs(conflict.theirs, conflict.mine)}</div>
     </div>
     <div class="conflict-card-actions">
       <button class="conflict-btn-mine" data-file="${fileEntry.file}" data-id="${conflict.id}" data-choice="mine">Accept Mine</button>
