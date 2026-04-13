@@ -10,10 +10,6 @@
   <link rel="stylesheet" href="editor.css" />
   <style>
     body { padding: 20px; }
-    .preview-section { margin-bottom: 40px; }
-    .preview-label { font-size: 1.2em; color: var(--ice-blue); margin-bottom: 12px; font-family: 'Jersey 15', serif; }
-
-    /* Force modal visible for preview */
     .modal-overlay.preview-visible {
       display: flex;
       position: relative;
@@ -25,13 +21,28 @@
       width: 100%;
       max-width: 800px;
     }
+    .mock-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .mock-controls button {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85em;
+      padding: 8px 16px;
+    }
   </style>
 </head>
 <body>
-  <h1 style="font-family: 'Jersey 15', serif; color: var(--ice-blue); margin-bottom: 20px;">Conflict Resolution UI Preview</h1>
-  <p style="color: var(--gray-light); margin-bottom: 30px;">This is a static mock showing what the conflict resolution modal looks like with sample data.</p>
+  <h1 style="font-family: 'Jersey 15', serif; color: var(--ice-blue); margin-bottom: 12px;">Conflict Resolution UI Preview</h1>
+  <p style="color: var(--gray-light); margin-bottom: 16px;">Interactive mock. Use the controls below to test different states.</p>
 
-  <!-- Mock conflict modal -->
+  <div class="mock-controls">
+    <button id="mockReset" class="btn-sm" style="background: var(--emerald-green);">Reset All Cards</button>
+    <button id="mockTriggerError" class="btn-sm" style="background: var(--danger);">Simulate Git Error</button>
+  </div>
+
   <div class="modal-overlay preview-visible">
     <div class="modal modal-lg">
       <div class="modal-header">
@@ -41,113 +52,170 @@
       <div class="modal-body">
         <p class="deploy-hint">Your changes conflict with changes made by someone else. Resolve each conflict below, then finish deploying.</p>
         <div class="conflict-bulk-actions">
-          <button class="btn-sm">Accept All Mine</button>
-          <button class="btn-sm">Accept All Theirs</button>
-          <button class="btn-sm btn-danger">Discard My Changes</button>
+          <button class="btn-sm" id="mockAcceptAllMine">Accept All Mine</button>
+          <button class="btn-sm" id="mockAcceptAllTheirs">Accept All Theirs</button>
+          <button class="btn-sm btn-danger" id="mockDiscard">Discard My Changes</button>
         </div>
-        <div class="conflict-cards">
-
-          <!-- Conflict Card 1 -->
-          <div class="conflict-card">
-            <div class="conflict-card-header">
-              <span class="conflict-card-file">src/pages/calgary_jailbirds.md</span>
-              <span>Conflict #1</span>
-            </div>
-            <div class="conflict-card-body">
-              <div class="conflict-side conflict-mine">
-                <span class="conflict-side-label">Your changes</span>The Calgary Jailbirds won the **2021 Denley Cup** after a hard-fought series against the New Orleans Braves, winning 4-2.</div>
-              <div class="conflict-side conflict-theirs">
-                <span class="conflict-side-label">Their changes</span>The Calgary Jailbirds won the 2021 Denley Cup, defeating the New Orleans Braves in six games.</div>
-            </div>
-            <div class="conflict-card-actions">
-              <button class="conflict-btn-mine">Accept Mine</button>
-              <button class="conflict-btn-theirs">Accept Theirs</button>
-            </div>
-          </div>
-
-          <!-- Conflict Card 2 -->
-          <div class="conflict-card">
-            <div class="conflict-card-header">
-              <span class="conflict-card-file">src/pages/calgary_jailbirds.md</span>
-              <span>Conflict #2</span>
-            </div>
-            <div class="conflict-card-body">
-              <div class="conflict-side conflict-mine">
-                <span class="conflict-side-label">Your changes</span>### Notable Players
-
-- [Kev Burgess](kev_burgess) - Captain
-- [Sean Thompson](sean_thompson) - Alternate Captain
-- [Blark Darson](blark_darson) - Star Forward</div>
-              <div class="conflict-side conflict-theirs">
-                <span class="conflict-side-label">Their changes</span>### Key Players
-
-- [Kev Burgess](kev_burgess)
-- [Sean Thompson](sean_thompson)
-- [Blark Darson](blark_darson)
-- [Noel Wyndandyk](noel_wyndandyk)</div>
-            </div>
-            <div class="conflict-card-actions">
-              <button class="conflict-btn-mine">Accept Mine</button>
-              <button class="conflict-btn-theirs">Accept Theirs</button>
-            </div>
-          </div>
-
-          <!-- Conflict Card 3 (resolved state) -->
-          <div class="conflict-card conflict-resolved">
-            <div class="conflict-card-header">
-              <span class="conflict-card-file">src/pages/index.md</span>
-              <span>Conflict #1</span>
-            </div>
-            <div class="conflict-card-body">
-              <div class="conflict-side conflict-mine">
-                <span class="conflict-side-label">Your changes</span>[Browse all pages](sitemap)</div>
-              <div class="conflict-side conflict-theirs">
-                <span class="conflict-side-label">Their changes</span>[View all wiki pages](sitemap)</div>
-            </div>
-            <div class="conflict-card-actions">
-              <button class="conflict-btn-mine">Accept Mine</button>
-              <button class="conflict-btn-theirs">Accept Theirs</button>
-            </div>
-          </div>
-
-          <!-- Conflict Card 4 - empty mine side -->
-          <div class="conflict-card">
-            <div class="conflict-card-header">
-              <span class="conflict-card-file">src/pages/dean_resler.md</span>
-              <span>Conflict #1</span>
-            </div>
-            <div class="conflict-card-body">
-              <div class="conflict-side conflict-mine">
-                <span class="conflict-side-label">Your changes</span>(empty)</div>
-              <div class="conflict-side conflict-theirs">
-                <span class="conflict-side-label">Their changes</span>Dean Resler was a legendary defenseman known for his incredible shot-blocking ability and leadership on and off the ice.</div>
-            </div>
-            <div class="conflict-card-actions">
-              <button class="conflict-btn-mine">Accept Mine</button>
-              <button class="conflict-btn-theirs">Accept Theirs</button>
-            </div>
-          </div>
-
-        </div>
-        <button class="btn-primary btn-deploy" disabled>Finish Deploy</button>
-        <div class="deploy-feedback">2 of 4 conflicts resolved</div>
+        <div class="conflict-cards" id="mockCards"></div>
+        <button class="btn-primary btn-deploy" id="mockFinish" disabled>Finish Deploy</button>
+        <div class="deploy-feedback" id="mockFeedback">0 of 4 conflicts resolved</div>
       </div>
     </div>
   </div>
 
-  <script>
-    document.querySelectorAll('.conflict-btn-mine, .conflict-btn-theirs').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const card = btn.closest('.conflict-card');
-        card.classList.add('conflict-resolved');
-        const total = document.querySelectorAll('.conflict-card').length;
-        const resolved = document.querySelectorAll('.conflict-resolved').length;
-        document.querySelector('.deploy-feedback').textContent = `${resolved} of ${total} conflicts resolved`;
-        if (resolved >= total) {
-          document.querySelector('.btn-deploy').disabled = false;
+  <script type="module">
+    const MOCK_CONFLICTS = [
+      {
+        file: 'src/pages/calgary_jailbirds.md',
+        mine: 'The Calgary Jailbirds won the **2021 Denley Cup** after a hard-fought series against the New Orleans Braves, winning 4-2.',
+        theirs: 'The Calgary Jailbirds won the 2021 Denley Cup, defeating the New Orleans Braves in six games.',
+      },
+      {
+        file: 'src/pages/calgary_jailbirds.md',
+        mine: '### Notable Players\n\n- [Kev Burgess](kev_burgess) - Captain\n- [Sean Thompson](sean_thompson) - Alternate Captain\n- [Blark Darson](blark_darson) - Star Forward',
+        theirs: '### Key Players\n\n- [Kev Burgess](kev_burgess)\n- [Sean Thompson](sean_thompson)\n- [Blark Darson](blark_darson)\n- [Noel Wyndandyk](noel_wyndandyk)',
+      },
+      {
+        file: 'src/pages/index.md',
+        mine: '[Browse all pages](sitemap)',
+        theirs: '[View all wiki pages](sitemap)',
+      },
+      {
+        file: 'src/pages/dean_resler.md',
+        mine: '',
+        theirs: 'Dean Resler was a legendary defenseman known for his incredible shot-blocking ability and leadership on and off the ice.',
+      },
+    ];
+
+    const GIT_ERROR_MSG = `Command failed: git rebase --continue\nerror: could not apply fa39187... Update from editor\nResolve all conflicts manually, mark them as resolved with "git add/rm &lt;conflicted_files&gt;", then run "git rebase --continue".\nYou can instead skip this commit: run "git rebase --skip".`;
+
+    const escapeHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const tokenize = (text) => text.split(/(\s+)/);
+
+    const lcs = (a, b) => {
+      const m = a.length, n = b.length;
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 1; i <= m; i++)
+        for (let j = 1; j <= n; j++)
+          dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] + 1 : Math.max(dp[i-1][j], dp[i][j-1]);
+      const result = [];
+      let i = m, j = n;
+      while (i > 0 && j > 0) {
+        if (a[i-1] === b[j-1]) { result.unshift(a[i-1]); i--; j--; }
+        else if (dp[i-1][j] > dp[i][j-1]) i--;
+        else j--;
+      }
+      return result;
+    };
+
+    const highlightDiff = (text, other, tag) => {
+      const tokens = tokenize(text);
+      const otherTokens = tokenize(other);
+      const common = lcs(tokens, otherTokens);
+      let ci = 0;
+      return tokens.map((t) => {
+        if (ci < common.length && t === common[ci]) { ci++; return escapeHtml(t); }
+        if (/^\s+$/.test(t)) return escapeHtml(t);
+        return '<' + tag + '>' + escapeHtml(t) + '</' + tag + '>';
+      }).join('');
+    };
+
+    const diffMine = (mine, theirs) => mine ? highlightDiff(mine, theirs, 'del') : '<em>(empty)</em>';
+    const diffTheirs = (theirs, mine) => theirs ? highlightDiff(theirs, mine, 'ins') : '<em>(empty)</em>';
+
+    const container = document.getElementById('mockCards');
+    const feedback = document.getElementById('mockFeedback');
+    const finishBtn = document.getElementById('mockFinish');
+
+    const updateCount = () => {
+      const total = container.querySelectorAll('.conflict-card').length;
+      const resolved = container.querySelectorAll('.conflict-resolved').length;
+      const allDone = resolved >= total;
+      finishBtn.disabled = !allDone;
+      if (allDone && total > 0) {
+        feedback.textContent = 'All conflicts resolved. Click Finish Deploy to publish.';
+        feedback.className = 'deploy-feedback success';
+      } else if (total > 0) {
+        feedback.textContent = resolved + ' of ' + total + ' conflicts resolved. Resolve all conflicts before deploying.';
+        feedback.className = 'deploy-feedback';
+      }
+    };
+
+    const resolveCard = (card) => {
+      card.classList.add('conflict-resolved');
+      updateCount();
+    };
+
+    const renderCards = () => {
+      container.innerHTML = MOCK_CONFLICTS.map((c, i) => `
+        <div class="conflict-card" id="mock-${i}">
+          <div class="conflict-card-header">
+            <span class="conflict-card-file">${c.file}</span>
+            <span>Conflict #${i + 1}</span>
+          </div>
+          <div class="conflict-card-body">
+            <div class="conflict-side conflict-mine">
+              <span class="conflict-side-label">Your changes</span>${diffMine(c.mine, c.theirs)}</div>
+            <div class="conflict-side conflict-theirs">
+              <span class="conflict-side-label">Their changes</span>${diffTheirs(c.theirs, c.mine)}</div>
+          </div>
+          <div class="conflict-card-actions">
+            <button class="conflict-btn-mine" data-idx="${i}">Accept Mine</button>
+            <button class="conflict-btn-theirs" data-idx="${i}">Accept Theirs</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.conflict-btn-mine, .conflict-btn-theirs').forEach((btn) => {
+        btn.addEventListener('click', () => resolveCard(document.getElementById('mock-' + btn.dataset.idx)));
+      });
+
+      finishBtn.disabled = true;
+      updateCount();
+    };
+
+    const showGitError = () => {
+      feedback.className = 'deploy-feedback error';
+      feedback.innerHTML = `<strong>Deploy failed</strong><br>
+        <code style="font-size:0.85em;word-break:break-word;">${GIT_ERROR_MSG}</code><br><br>
+        This may need manual resolution. Please:
+        <ol style="margin:8px 0 8px 20px;font-size:0.9em;">
+          <li>Download <a href="https://code.visualstudio.com/" target="_blank" style="color:var(--deep-blue);">VSCode</a></li>
+          <li>Contact <strong>Kev</strong> for help resolving this</li>
+        </ol>
+        <button id="mockErrorDiscard" class="btn-sm btn-danger" style="margin-top:4px;">Discard All My Changes</button>`;
+      document.getElementById('mockErrorDiscard').addEventListener('click', () => {
+        if (confirm('This will PERMANENTLY DELETE all your local changes. Are you sure?')) {
+          feedback.textContent = 'Reset complete. Your local copy now matches the live site.';
+          feedback.className = 'deploy-feedback success';
+          container.innerHTML = '<p class="conflict-empty">All changes discarded.</p>';
+          finishBtn.disabled = true;
         }
       });
+    };
+
+    document.getElementById('mockAcceptAllMine').addEventListener('click', () => {
+      container.querySelectorAll('.conflict-card:not(.conflict-resolved)').forEach(resolveCard);
     });
+    document.getElementById('mockAcceptAllTheirs').addEventListener('click', () => {
+      container.querySelectorAll('.conflict-card:not(.conflict-resolved)').forEach(resolveCard);
+    });
+    document.getElementById('mockDiscard').addEventListener('click', () => {
+      if (confirm('This will PERMANENTLY DELETE all your local changes and reset to the remote version. Are you absolutely sure?')) {
+        feedback.textContent = 'Reset complete. Your local copy now matches the live site.';
+        feedback.className = 'deploy-feedback success';
+        container.innerHTML = '<p class="conflict-empty">All changes discarded.</p>';
+        finishBtn.disabled = true;
+      }
+    });
+    document.getElementById('mockFinish').addEventListener('click', () => {
+      feedback.textContent = 'Deployed successfully after resolving conflicts!';
+      feedback.className = 'deploy-feedback success';
+    });
+    document.getElementById('mockReset').addEventListener('click', renderCards);
+    document.getElementById('mockTriggerError').addEventListener('click', showGitError);
+
+    renderCards();
   </script>
 </body>
 </html>

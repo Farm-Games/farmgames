@@ -82,7 +82,7 @@ const deploy = async (editor) => {
     }
 
     if (!res.ok) {
-      showDeployFeedback(result.error || 'Deploy failed.', 'error');
+      showDeployGitError(result.error || 'Deploy failed.');
     } else if (result.deployed) {
       showDeployFeedback('Deployed successfully! Your changes are now live.', 'success');
       $('#deployMessage').value = '';
@@ -93,10 +93,41 @@ const deploy = async (editor) => {
       showDeployFeedback(result.message || 'Nothing to deploy.', 'error');
     }
   } catch (err) {
-    showDeployFeedback('Deploy failed: ' + err.message, 'error');
+    showDeployGitError(err.message);
   }
   btn.disabled = false;
   btn.textContent = 'Deploy Selected';
+};
+
+const showDeployGitError = (errorMsg) => {
+  const fb = $('#deployFeedback');
+  fb.className = 'deploy-feedback error';
+  fb.innerHTML = `<strong>Deploy failed</strong><br>
+    <code style="font-size:0.85em;word-break:break-word;">${errorMsg.replace(/</g, '&lt;')}</code><br><br>
+    This may need manual resolution. Please:
+    <ol style="margin:8px 0 8px 20px;font-size:0.9em;">
+      <li>Download <a href="https://code.visualstudio.com/" target="_blank" style="color:var(--deep-blue);">VSCode</a></li>
+      <li>Contact <strong>Kev</strong> for help resolving this</li>
+    </ol>
+    <button id="btnDeployDiscard" class="btn-sm btn-danger" style="margin-top:4px;">Discard All My Changes</button>`;
+  $('#btnDeployDiscard').addEventListener('click', () => discardAndReset());
+};
+
+const discardAndReset = async () => {
+  if (
+    !confirm(
+      'This will PERMANENTLY DELETE all your local changes and reset to the live website version. Are you absolutely sure?',
+    )
+  )
+    return;
+  try {
+    showDeployFeedback('Resetting...', '');
+    await postJson('/api/deploy/conflicts/reset', {});
+    showDeployFeedback('Reset complete. Your local copy now matches the live site.', 'success');
+    refreshDeploySummary();
+  } catch (err) {
+    showDeployFeedback('Reset failed: ' + err.message, 'error');
+  }
 };
 
 const revertSelected = async (editor) => {

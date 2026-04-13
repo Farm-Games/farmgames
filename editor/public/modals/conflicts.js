@@ -98,7 +98,16 @@ const countResolvedCards = () =>
 const updateFinishButton = () => {
   const total = countTotalConflicts();
   const resolved = countResolvedCards();
-  $(CONFLICT_FINISH_SELECTOR).disabled = resolved < total;
+  const allDone = resolved >= total;
+  $(CONFLICT_FINISH_SELECTOR).disabled = !allDone;
+  const fb = $(CONFLICT_FEEDBACK_SELECTOR);
+  if (allDone && total > 0) {
+    fb.textContent = 'All conflicts resolved. Click Finish Deploy to publish.';
+    fb.className = 'deploy-feedback success';
+  } else if (total > 0) {
+    fb.textContent = `${resolved} of ${total} conflicts resolved. Resolve all conflicts before deploying.`;
+    fb.className = 'deploy-feedback';
+  }
 };
 
 const renderConflicts = () => {
@@ -190,10 +199,24 @@ const finishDeploy = async () => {
       closeModalFn($('#conflictModal'));
     }
   } catch (err) {
-    showConflictFeedback('Finish failed: ' + err.message, 'error');
+    showConflictGitError(err.message);
   }
   btn.disabled = false;
   btn.textContent = 'Finish Deploy';
+};
+
+const showConflictGitError = (errorMsg) => {
+  const fb = $(CONFLICT_FEEDBACK_SELECTOR);
+  fb.className = 'deploy-feedback error';
+  fb.innerHTML = `<strong>Deploy failed</strong><br>
+    <code style="font-size:0.85em;word-break:break-word;">${errorMsg.replace(/</g, '&lt;')}</code><br><br>
+    This may need manual resolution. Please:
+    <ol style="margin:8px 0 8px 20px;font-size:0.9em;">
+      <li>Download <a href="https://code.visualstudio.com/" target="_blank" style="color:var(--deep-blue);">VSCode</a></li>
+      <li>Contact <strong>Kev</strong> for help resolving this</li>
+    </ol>
+    <button id="btnConflictDiscard" class="btn-sm btn-danger" style="margin-top:4px;">Discard All My Changes</button>`;
+  $('#btnConflictDiscard').addEventListener('click', () => resetToRemote());
 };
 
 export const openConflictModal = (files) => {

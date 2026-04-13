@@ -27,12 +27,15 @@ const SITE_CONFIG = loadSiteConfig();
 
 const isStubFile = (file) => file.startsWith('file_');
 
+const HIDDEN_PAGES = new Set(['install']);
+const isHiddenPage = (file) => HIDDEN_PAGES.has(file);
+
 const stripExtension = (file) => file.replace('.md', '');
 
 const filesToSelectOptions = (files) =>
   files
     .map(stripExtension)
-    .filter((file) => !isStubFile(file))
+    .filter((file) => !isStubFile(file) && !isHiddenPage(file))
     .map((file) => `<option value="${file}">${fileNameToTitle(file)}</option>`)
     .join('');
 
@@ -106,7 +109,7 @@ const generateSitemapMarkdown = (grouped) => {
 const generateSitemap = (files) => {
   const pages = files
     .map(stripExtension)
-    .filter((f) => !isStubFile(f) && f !== 'index' && f !== 'sitemap');
+    .filter((f) => !isStubFile(f) && !isHiddenPage(f) && f !== 'index' && f !== 'sitemap');
 
   const grouped = groupByFirstLetter(pages);
   const md = generateSitemapMarkdown(grouped);
