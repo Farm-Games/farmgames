@@ -2,6 +2,14 @@
 
 Welcome! This guide will help you set up the editor so you can create and edit wiki pages.
 
+## Before you start
+
+1. **Create a GitHub account** at [github.com/signup](https://github.com/signup) if you don't already have one
+2. **Send Kev your GitHub username** so he can add you as a contributor
+3. **Accept the invite** -- check your email or go to [github.com/notifications](https://github.com/notifications) and accept the repository invitation
+
+Once Kev confirms you've been added, continue with the setup below.
+
 ## Quick Setup (Recommended)
 
 We have a setup script that handles everything automatically -- installing Git, Node.js, SSH keys, cloning the project, and creating a desktop shortcut.

@@ -86,7 +86,13 @@ const clearOutputFolder = (folder) => {
   }
   const files = fs.readdirSync(folder);
   for (const file of files) {
-    fs.unlink(folder + file, () => {});
+    const filePath = folder + file;
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory()) {
+      fs.rmSync(filePath, { recursive: true });
+    } else {
+      fs.unlinkSync(filePath);
+    }
   }
   console.log('Output folder has been cleared');
 };

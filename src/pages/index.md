@@ -1,12 +1,12 @@
-<h1>Welcome to the Farm Games Wiki!</h1>\!\[thumb\]\(file\_hockeykiss\_0\_0\_jpg\)
-The Farm Games rock! This is the guide to all things Farm Games, and this guide may very well have some perspiration stains on it by now, because these teams have worked pretty hard! Grab a spoon and get your stew cooked, it's Ray Ferraro time!
+<h1>Welcome to the Farm Games Wiki!</h1>
+<img src="/images/657225918_18100438460506034_8270542873589953547_n.jpg" alt="657225918_18100438460506034_8270542873589953547_n.jpg" class="img-small img-left" />
+ The Farm Games rock! This is the guide to all things Farm Games, and this guide may very well have some perspiration stains on it by now, because these teams have worked pretty hard! Grab a spoon and get your stew cooked, it's Ray Ferraro time!
 
 > ''"And ring more bells on that one, one after another!"'' -[Doc Emrick](#a), deceased ![thumb](file_3000_jpg)
 
 > "''Everyone has their own personal Denley in their lives. Could be you're trying to get a big promotion, or you're just getting by, one day at a time... I think immigrants could learn a thing or two about that.''" - [Phil Foesome](#a), unprompted ![thumb](file_screen_shot_2023_04_15_at_4_00_44_am_png)
 
 ### [Browse all pages](sitemap)
-
 
 ### A Guide to Farm Games Teams
 
@@ -67,4 +67,3 @@ The Farm Games rock! This is the guide to all things Farm Games, and this guide 
 * Mississipi Klansmen
 
 ### Important articles
-
